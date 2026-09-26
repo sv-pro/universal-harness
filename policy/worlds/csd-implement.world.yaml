@@ -1,0 +1,183 @@
+# World manifest — CSD implementation stage (stage 3.4), one change.
+#
+# Format: ai2rules WorldManifest (sv-pro/ai2rules v0.6.0, crates/harness-types/src/manifest.rs).
+# Compiled and decided by the ai2rules kernel; verified by policy/run-cases.py.
+# Design notes: docs/design-guide/17-execution-governance.md.
+#
+# This is a TEMPLATE instantiated per change (ChangePlan). The literal values
+# (repo, base branch, head branch, test command) are filled in when the human
+# approves the ChangePlan — that approval is the design-time boundary.
+# Design-time literals are clean by construction, so the taint floor lets
+# tainted *content* (the PR body, the diff) reach a destination the agent
+# could not choose.
+#
+# Stage rules expressed here:
+#   - What this stage may not do does not exist here: merge, deploy, release,
+#     memory writes and credential access are ABSENT (not declared).
+#   - The repository is untrusted input: reads under the workspace taint the session.
+#   - Verifiers and the control plane are read-only: CI config, policy/, the
+#     agent's own settings.
+#   - Unclassified shell is network-effectful and approval-gated. In background
+#     mode this becomes DENY, so the agent uses typed verbs (run_tests, git_*).
+
+world_id: csd-implement
+
+channels:
+  # Who proposed the call (declared by the orchestrator, D69).
+  - { name: user_prompt, trust: Trusted, taint: false }      # the approved ChangePlan / human
+  - { name: generated, trust: SemiTrusted, taint: true }     # the implementation model's own proposals
+  - { name: workspace_files, trust: Untrusted, taint: true }
+  - { name: mcp_output, trust: Untrusted, taint: true }
+  - { name: web_fetch, trust: Untrusted, taint: true }
+
+capabilities:
+  - { trust: Trusted, actions: [Read, Write, Patch, Command, Mcp, Web] }
+  - { trust: SemiTrusted, actions: [Read, Write, Patch, Command, Mcp] }
+  - { trust: Untrusted, actions: [Read] }
+
+base_actions:
+  - name: read_file
+    action_type: Read
+    side_effect: Read
+    schema:
+      type: object
+      required: [path]
+      properties: { path: { type: string } }
+
+  - name: write_file
+    action_type: Patch
+    side_effect: FilesystemWrite
+    schema:
+      type: object
+      required: [path, contents]
+      properties: { path: { type: string }, contents: { type: string } }
+
+  - name: run_command
+    action_type: Command
+    side_effect: Process
+    schema:
+      type: object
+      required: [command]
+      properties: { command: { type: string } }
+
+  - name: run_command_network
+    action_type: Command
+    side_effect: Network
+    schema:
+      type: object
+      required: [command]
+      properties: { command: { type: string } }
+
+  - name: run_command_destructive
+    action_type: Command
+    side_effect: Process
+    approval_required: true
+    schema:
+      type: object
+      required: [command]
+      properties: { command: { type: string } }
+
+  - name: run_command_unclassified
+    action_type: Command
+    side_effect: Network
+    approval_required: true
+    schema:
+      type: object
+      required: [command]
+      properties: { command: { type: string } }
+
+  # Issue tracker read (remote ingress: output taints the session, D50).
+  - name: read_issue
+    action_type: Mcp
+    side_effect: Read
+    backing: !McpServer { server: tracker, tool: get_issue }
+    schema:
+      type: object
+      required: [key]
+      properties: { key: { type: string } }
+
+  # Code host: open a pull request. External effect → taint floor applies.
+  # Every authority-bearing argument is declared (see 17 §6 "role completeness").
+  # `projected: false` (ai2rules D79): only the pinned verb below can reach it; a
+  # direct call is ABSENT. Ignored by ai2rules <= 0.6.0 (G1 stays open there).
+  - name: create_pull_request
+    action_type: Mcp
+    side_effect: External
+    projected: false
+    backing: !McpServer { server: codehost, tool: create_pull_request }
+    schema:
+      type: object
+      required: [repo, base, head, title, body]
+      properties:
+        repo: { type: string }
+        base: { type: string }
+        head: { type: string }
+        title: { type: string }
+        body: { type: string }
+    arg_roles: { repo: Target, base: Target, head: Target, title: Content, body: Content }
+
+  - name: fetch_web
+    action_type: Web
+    side_effect: Network
+    schema:
+      type: object
+      required: [url]
+      properties: { url: { type: string } }
+    arg_roles: { url: Target }
+
+scoped_capabilities:
+  # Typed verbs the model should use instead of raw shell.
+  - name: run_tests
+    base_action: run_command
+    args: { command: !Literal "make test" }
+  - name: git_status
+    base_action: run_command
+    args: { command: !Literal "git status --porcelain" }
+  - name: git_diff
+    base_action: run_command
+    args: { command: !Literal "git diff" }
+  # The only way this stage publishes work: destination fixed at ChangePlan approval.
+  - name: open_change_pr
+    base_action: create_pull_request
+    args:
+      repo: !Literal "acme/svc-billing"
+      base: !Literal "main"
+      head: !Literal "agent/CHG-1234"
+      title: ActorInput
+      body: ActorInput
+
+command_classes:
+  - action: run_command
+    arg: command
+    default_to: run_command_unclassified
+    classes:
+      - to: run_command
+        patterns: ["make test", "make lint", "go test ", "go vet ", "pytest", "npm test", "git status", "git diff", "git log", "ls ", "cat ", "grep "]
+      - to: run_command_network
+        patterns: ["curl ", "wget ", "git push", "git fetch", "git pull", "npm install", "pip install", "ssh ", "scp "]
+      - to: run_command_destructive
+        patterns: ["rm -rf", "rm -fr", "git reset --hard", "git clean", "git push --force", "sudo "]
+
+roots:
+  default: Deny                       # hard jail: nothing outside the listed roots
+  rules:
+    - { path: ".", access: ReadWrite, taint_source: true }   # the repo is untrusted input
+    - { path: "./.github", access: Read, taint_source: true }  # CI = protected verifier (DAA)
+    - { path: "./ci", access: Read, taint_source: true }
+    - { path: "./policy", access: Read, taint_source: true }   # control plane (ai2rules D57)
+    - { path: "./.claude", access: Read, taint_source: true }
+    - { path: "./.env", access: Deny, class: Secret }
+    - { path: "~/.ssh", access: Deny, class: Credential }
+
+transition_policies:
+  # The code floor already denies tainted Network/External/Credential/Memory/
+  # PersistentWrite; this line only names the rule in audits.
+  - { from_taint: Tainted, side_effect: Network, decision: Deny, rule: no_tainted_egress }
+
+budget:
+  max_commands_per_task: 200
+  max_file_writes: 400
+  command_timeout_ms: 600000
+
+observability:
+  redact: ["env.*_TOKEN", "env.*_KEY", "**/.env", "arguments.contents"]
