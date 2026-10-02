@@ -1,0 +1,963 @@
+{
+ "impl-a2r-alias-rename": {
+  "cargo_exit": 0,
+  "compiled": true,
+  "fail_to_pass": {
+   "crates/cli-harness/src/agy_hook.rs::a_renamed_argument_satisfies_a_closed_schema": "ok",
+   "crates/cli-harness/src/agy_hook.rs::an_undeclared_host_argument_still_fails_a_closed_schema": "ok"
+  },
+  "failed_tests": [],
+  "fix": "d771cdda69f1",
+  "oracle_holds": true,
+  "seconds": 6,
+  "tests_run": 302
+ },
+ "impl-a2r-approval-log-signing": {
+  "cargo_exit": 0,
+  "compiled": true,
+  "fail_to_pass": {
+   "crates/trace-store/src/approval.rs::a_modified_line_is_refused": "ok",
+   "crates/trace-store/src/approval.rs::a_world_readable_key_is_refused": "ok",
+   "crates/trace-store/src/approval.rs::an_appended_forged_approval_is_refused": "ok",
+   "crates/trace-store/src/approval.rs::manifest_drift_voids_the_approval": "ok",
+   "crates/trace-store/src/approval.rs::the_key_is_created_private": "ok",
+   "crates/trace-store/src/integrity.rs::a_changed_message_gives_a_different_mac": "ok",
+   "crates/trace-store/src/integrity.rs::a_different_key_gives_a_different_mac": "ok",
+   "crates/trace-store/src/integrity.rs::constant_time_eq_still_compares_correctly": "ok",
+   "crates/trace-store/src/integrity.rs::rfc4231_case_1": "ok",
+   "crates/trace-store/src/integrity.rs::rfc4231_case_2": "ok",
+   "crates/trace-store/src/integrity.rs::rfc4231_case_6_long_key": "ok"
+  },
+  "failed_tests": [],
+  "fix": "a9cf4490e0f0",
+  "oracle_holds": true,
+  "seconds": 11,
+  "tests_run": 300
+ },
+ "impl-a2r-budgets-bind": {
+  "cargo_exit": 0,
+  "compiled": true,
+  "fail_to_pass": {
+   "crates/harness-preview/src/gate.rs::a_blocked_call_charges_nothing": "ok",
+   "crates/harness-preview/src/gate.rs::a_budgeted_world_refuses_a_request_with_no_counters": "ok",
+   "crates/harness-preview/src/gate.rs::an_allowed_call_charges_the_budget_it_consumes": "ok",
+   "crates/harness-preview/src/gate.rs::carried_usage_at_the_limit_denies": "ok",
+   "crates/harness-preview/src/gate.rs::only_a_counted_limit_obliges_a_caller_to_carry_counters": "ok"
+  },
+  "failed_tests": [],
+  "fix": "a030c8acf249",
+  "oracle_holds": true,
+  "seconds": 11,
+  "tests_run": 269
+ },
+ "impl-a2r-class-first-match": {
+  "cargo_exit": 0,
+  "compiled": true,
+  "fail_to_pass": {
+   "crates/harness-preview/src/gate.rs::a_command_claimed_by_two_classes_falls_to_the_fail_closed_bucket": "ok",
+   "crates/harness-preview/src/gate.rs::an_unambiguous_command_still_classifies_normally": "ok",
+   "crates/harness-preview/src/gate.rs::several_classes_pointing_at_one_target_are_not_ambiguous": "ok"
+  },
+  "failed_tests": [],
+  "fix": "eee680aaf0a4",
+  "oracle_holds": true,
+  "seconds": 7,
+  "tests_run": 264
+ },
+ "impl-a2r-control-plane-readonly": {
+  "cargo_exit": 0,
+  "compiled": true,
+  "fail_to_pass": {
+   "crates/cli-harness/tests/init.rs::ordinary_project_files_are_still_writable": "ok",
+   "crates/cli-harness/tests/init.rs::the_agent_can_still_read_the_policy": "ok",
+   "crates/cli-harness/tests/init.rs::the_agent_cannot_write_the_policy_that_governs_it": "ok"
+  },
+  "failed_tests": [],
+  "fix": "f35675e9769d",
+  "oracle_holds": true,
+  "seconds": 10,
+  "tests_run": 253
+ },
+ "impl-a2r-dangling-symlink": {
+  "cargo_exit": 0,
+  "compiled": true,
+  "fail_to_pass": {
+   "crates/executor/src/lib.rs::dangling_symlink_leaf_inside_root_cannot_escape_write": "ok",
+   "crates/executor/src/lib.rs::resolvable_symlink_leaf_pointing_outside_is_denied": "ok"
+  },
+  "failed_tests": [],
+  "fix": "4edaf2225e7d",
+  "oracle_holds": true,
+  "seconds": 4,
+  "tests_run": 198
+ },
+ "impl-a2r-default-to-required": {
+  "cargo_exit": 0,
+  "compiled": true,
+  "fail_to_pass": {
+   "crates/compiler/src/lib.rs::validate_rejects_duplicate_command_classifiers_for_one_action": "ok",
+   "crates/compiler/src/lib.rs::validate_requires_a_default_to_on_every_command_classifier": "ok"
+  },
+  "failed_tests": [],
+  "fix": "49a3252ef4eb",
+  "oracle_holds": true,
+  "seconds": 4,
+  "tests_run": 261
+ },
+ "impl-a2r-epic-e1": {
+  "cargo_exit": 0,
+  "compiled": true,
+  "fail_to_pass": {
+   "crates/compiler/src/hashing.rs::sha256_matches_known_vector": "ok",
+   "crates/compiler/src/hashing.rs::sha256_of_empty_is_known_vector": "ok",
+   "crates/compiler/src/lib.rs::capability_matrix_compiles": "ok",
+   "crates/compiler/src/lib.rs::changed_manifest_changes_world_version": "ok",
+   "crates/compiler/src/lib.rs::default_world_parses_and_compiles": "ok",
+   "crates/compiler/src/lib.rs::descriptor_hashes_are_present_and_stable": "ok",
+   "crates/compiler/src/lib.rs::ontology_contains_base_actions_and_scoped_capabilities": "ok",
+   "crates/compiler/src/lib.rs::pty_requires_approval_and_taint_rules_present": "ok",
+   "crates/compiler/src/lib.rs::scoped_capability_inherits_base_type_and_side_effect": "ok",
+   "crates/compiler/src/lib.rs::validate_rejects_duplicate_base_action": "ok",
+   "crates/compiler/src/lib.rs::validate_rejects_empty_world_id": "ok",
+   "crates/compiler/src/lib.rs::validate_rejects_unknown_base_action": "ok",
+   "crates/compiler/src/lib.rs::whole_ontology_is_projected_by_default": "ok"
+  },
+  "failed_tests": [],
+  "fix": "39d0182f987f",
+  "oracle_holds": true,
+  "seconds": 7,
+  "tests_run": 22
+ },
+ "impl-a2r-epic-e2": {
+  "cargo_exit": 0,
+  "compiled": true,
+  "fail_to_pass": {
+   "crates/world-kernel/src/invariants.rs::clean_external_action_passes": "ok",
+   "crates/world-kernel/src/invariants.rs::drifted_descriptor_hash_is_rejected": "ok",
+   "crates/world-kernel/src/invariants.rs::matching_descriptor_hash_passes": "ok",
+   "crates/world-kernel/src/invariants.rs::tainted_external_action_violates_floor": "ok",
+   "crates/world-kernel/src/invariants.rs::tainted_local_action_passes": "ok",
+   "crates/world-kernel/src/lib.rs::approval_required_action_asks": "ok",
+   "crates/world-kernel/src/lib.rs::capability_gap_reads_as_absent": "ok",
+   "crates/world-kernel/src/lib.rs::clean_read_is_allowed_and_executes": "ok",
+   "crates/world-kernel/src/lib.rs::decide_is_deterministic_over_matrix": "ok",
+   "crates/world-kernel/src/lib.rs::decide_unknown_is_distinct_from_absent": "ok",
+   "crates/world-kernel/src/lib.rs::over_command_budget_replans": "ok",
+   "crates/world-kernel/src/lib.rs::tainted_taint_survives_across_sessions": "ok",
+   "crates/world-kernel/src/lib.rs::tainted_value_cannot_reach_network": "ok",
+   "crates/world-kernel/src/schema.rs::const_constraint_is_enforced": "ok",
+   "crates/world-kernel/src/schema.rs::empty_schema_accepts_anything": "ok",
+   "crates/world-kernel/src/schema.rs::enum_constraint_is_enforced": "ok",
+   "crates/world-kernel/src/schema.rs::missing_required_argument_is_rejected": "ok",
+   "crates/world-kernel/src/schema.rs::present_required_argument_passes": "ok",
+   "crates/world-kernel/src/schema.rs::wrong_property_type_is_rejected": "ok",
+   "crates/world-kernel/src/taint.rs::external_surfaces_are_classified": "ok",
+   "crates/world-kernel/src/taint.rs::local_surfaces_are_not_external": "ok"
+  },
+  "failed_tests": [],
+  "fix": "ffb21e1ffa22",
+  "oracle_holds": true,
+  "seconds": 1,
+  "tests_run": 43
+ },
+ "impl-a2r-epic-e3": {
+  "cargo_exit": 0,
+  "compiled": true,
+  "fail_to_pass": {
+   "crates/executor/src/lib.rs::command_past_timeout_is_killed": "ok",
+   "crates/executor/src/lib.rs::command_runs_and_reports_exit_code": "ok",
+   "crates/executor/src/lib.rs::descriptor_drift_blocks_before_handler": "ok",
+   "crates/executor/src/lib.rs::execute_writes_then_reads_back": "ok",
+   "crates/executor/src/lib.rs::simulated_write_has_no_side_effect": "ok",
+   "crates/executor/src/lib.rs::truncate_caps_long_output": "ok",
+   "crates/executor/src/lib.rs::unregistered_action_is_refused": "ok",
+   "crates/executor/src/lib.rs::unsupported_effect_mode_is_rejected": "ok",
+   "crates/executor/src/lib.rs::write_outside_writable_roots_is_denied": "ok",
+   "crates/world-kernel/src/lib.rs::end_to_end_execute_reads_a_real_file": "ok",
+   "crates/world-kernel/src/lib.rs::end_to_end_simulate_writes_nothing": "ok"
+  },
+  "failed_tests": [],
+  "fix": "d58f6236e7af",
+  "oracle_holds": true,
+  "seconds": 3,
+  "tests_run": 54
+ },
+ "impl-a2r-epic-e4": {
+  "cargo_exit": 0,
+  "compiled": true,
+  "fail_to_pass": {
+   "crates/trace-store/src/lib.rs::bundle_round_trips_and_replays": "ok",
+   "crates/trace-store/src/lib.rs::drift_report_flags_a_changed_verdict": "ok",
+   "crates/trace-store/src/lib.rs::replay_against_same_world_reproduces_every_decision": "ok",
+   "crates/trace-store/src/lib.rs::store_redacts_secrets_before_disk": "ok",
+   "crates/trace-store/src/redact.rs::glob_basics": "ok",
+   "crates/trace-store/src/redact.rs::no_patterns_is_identity": "ok",
+   "crates/trace-store/src/redact.rs::redacts_matching_nested_key": "ok",
+   "crates/trace-store/src/store.rs::append_then_read_round_trips_in_order": "ok",
+   "crates/trace-store/src/store.rs::reading_a_missing_trace_is_empty": "ok"
+  },
+  "failed_tests": [],
+  "fix": "50992751f339",
+  "oracle_holds": true,
+  "seconds": 2,
+  "tests_run": 63
+ },
+ "impl-a2r-epic-e5": {
+  "cargo_exit": 0,
+  "compiled": true,
+  "fail_to_pass": {
+   "crates/agent-core/src/context.rs::pack_exposes_tools_as_anthropic_defs": "ok",
+   "crates/agent-core/src/context.rs::surface_is_only_projected_actions": "ok",
+   "crates/agent-core/src/intent.rs::known_vs_unknown": "ok",
+   "crates/agent-core/src/lib.rs::clean_read_alone_is_allowed": "ok",
+   "crates/agent-core/src/lib.rs::loop_is_deterministic": "ok",
+   "crates/agent-core/src/lib.rs::loop_runs_the_full_verdict_range": "ok",
+   "crates/provider-adapters/src/anthropic.rs::formats_tool_result": "ok",
+   "crates/provider-adapters/src/anthropic.rs::missing_name_is_an_error": "ok",
+   "crates/provider-adapters/src/anthropic.rs::non_object_input_is_rejected": "ok",
+   "crates/provider-adapters/src/anthropic.rs::parses_tool_use_block": "ok",
+   "crates/provider-adapters/src/anthropic.rs::tool_definitions_lists_exactly_the_surface": "ok"
+  },
+  "failed_tests": [],
+  "fix": "6134d58d28f2",
+  "oracle_holds": true,
+  "seconds": 2,
+  "tests_run": 74
+ },
+ "impl-a2r-epic-e6": {
+  "cargo_exit": 0,
+  "compiled": true,
+  "fail_to_pass": {
+   "crates/agent-core/src/lib.rs::auto_approve_resumes_pty_to_allow": "ok",
+   "crates/agent-core/src/lib.rs::background_denies_pty": "ok",
+   "crates/agent-core/src/lib.rs::clean_read_alone_is_allowed": "ok",
+   "crates/trace-store/src/approval.rs::drift_voids_the_approval": "ok",
+   "crates/trace-store/src/approval.rs::mint_approve_then_granted": "ok",
+   "crates/trace-store/src/approval.rs::reject_is_not_granted": "ok",
+   "crates/trace-store/src/approval.rs::state_survives_reopen": "ok",
+   "crates/world-kernel/src/lib.rs::approval_required_in_background_denies": "ok",
+   "crates/world-kernel/src/lib.rs::granted_approval_allows": "ok"
+  },
+  "failed_tests": [],
+  "fix": "b999c1e026b3",
+  "oracle_holds": true,
+  "seconds": 2,
+  "tests_run": 82
+ },
+ "impl-a2r-epic-e7": {
+  "cargo_exit": 0,
+  "compiled": true,
+  "fail_to_pass": {
+   "crates/agent-core/src/lib.rs::mcp_result_taints_then_web_is_denied": "ok",
+   "crates/executor/src/lib.rs::mcp_drift_blocks_before_dispatch": "ok",
+   "crates/executor/src/lib.rs::mcp_handler_dispatches_via_transport": "ok",
+   "crates/executor/src/lib.rs::web_handler_returns_tainted_content": "ok",
+   "crates/world-kernel/src/spec.rs::base_action_params_pass_through": "ok",
+   "crates/world-kernel/src/spec.rs::read_repo_file_keeps_only_actor_input": "ok",
+   "crates/world-kernel/src/spec.rs::run_tests_strips_locked_args_and_injects_literal": "ok"
+  },
+  "failed_tests": [],
+  "fix": "1a866ddff766",
+  "oracle_holds": true,
+  "seconds": 4,
+  "tests_run": 89
+ },
+ "impl-a2r-feat-atlassian-skin": {
+  "cargo_exit": 0,
+  "compiled": true,
+  "fail_to_pass": {
+   "crates/cli-harness/tests/mcp_gateway_atlassian.rs::clean_session_allows_read_and_comment_but_writes_are_absent": "ok",
+   "crates/cli-harness/tests/mcp_gateway_atlassian.rs::tainted_session_severs_the_external_comment": "ok",
+   "crates/cli-harness/tests/mcp_gateway_atlassian.rs::tools_list_exposes_only_the_declared_rovo_surface": "ok"
+  },
+  "failed_tests": [],
+  "fix": "48386cc35f38",
+  "oracle_holds": true,
+  "seconds": 3,
+  "tests_run": 155
+ },
+ "impl-a2r-feat-authz-instance": {
+  "cargo_exit": 0,
+  "compiled": true,
+  "fail_to_pass": {
+   "crates/agent-core/src/lib.rs::authorization_binds_the_kernel_effective_action": "ok",
+   "crates/trace-store/src/approval.rs::canonical_effect_is_stable_across_object_key_order": "ok",
+   "crates/trace-store/src/approval.rs::concurrent_consumers_get_exactly_one_claim": "ok",
+   "crates/trace-store/src/approval.rs::principal_resource_and_expiry_are_enforced": "ok"
+  },
+  "failed_tests": [],
+  "fix": "14a986e31b5e",
+  "oracle_holds": true,
+  "seconds": 11,
+  "tests_run": 313
+ },
+ "impl-a2r-feat-bench-guarantees": {
+  "cargo_exit": 0,
+  "compiled": true,
+  "fail_to_pass": {
+   "crates/govbench/tests/pack.rs::a_correct_verdict_without_evidence_is_not_a_pass": "ok",
+   "crates/govbench/tests/pack.rs::assert_contrast_refuses_to_pass_without_running_the_contrast": "ok"
+  },
+  "failed_tests": [],
+  "fix": "14ebf10ee182",
+  "oracle_holds": true,
+  "seconds": 13,
+  "tests_run": 330
+ },
+ "impl-a2r-feat-cc-hook": {
+  "cargo_exit": 0,
+  "compiled": true,
+  "fail_to_pass": {
+   "crates/cli-harness/tests/cc_hook.rs::clean_egress_allows_but_escalates_taint": "ok",
+   "crates/cli-harness/tests/cc_hook.rs::clean_read_passes_through_silently": "ok",
+   "crates/cli-harness/tests/cc_hook.rs::destructive_bash_asks_for_approval": "ok",
+   "crates/cli-harness/tests/cc_hook.rs::tainted_egress_is_denied_by_the_taint_floor": "ok"
+  },
+  "failed_tests": [],
+  "fix": "ee4437692520",
+  "oracle_holds": true,
+  "seconds": 1,
+  "tests_run": 111
+ },
+ "impl-a2r-feat-deepseek": {
+  "cargo_exit": 0,
+  "compiled": true,
+  "fail_to_pass": {
+   "crates/cli-harness/src/project.rs::filters_absent_without_rewriting_host_schema": "ok",
+   "crates/cli-harness/src/project.rs::rejects_ambiguous_or_malformed_surfaces": "ok",
+   "crates/cli-harness/src/project.rs::source_capabilities_shape_discovery_like_invocation": "ok",
+   "crates/cli-harness/tests/project.rs::project_filters_absent_and_returns_joinable_identities": "ok",
+   "crates/cli-harness/tests/project.rs::project_rejects_duplicate_schema_names": "ok"
+  },
+  "failed_tests": [],
+  "fix": "1a60659a3ba0",
+  "oracle_holds": true,
+  "seconds": 11,
+  "tests_run": 309
+ },
+ "impl-a2r-feat-doctor-collector": {
+  "cargo_exit": 0,
+  "compiled": true,
+  "fail_to_pass": {
+   "crates/cli-harness/src/doctor_collector.rs::test_extract_sh_quoted_var": "ok",
+   "crates/cli-harness/src/doctor_collector.rs::test_inspection_context_capture": "ok",
+   "crates/cli-harness/src/doctor_collector.rs::test_parse_current_init_shim": "ok",
+   "crates/cli-harness/src/doctor_collector.rs::test_parse_current_init_shim_with_grant": "ok",
+   "crates/cli-harness/src/doctor_collector.rs::test_read_bounded_file_missing": "ok",
+   "crates/cli-harness/src/doctor_collector.rs::test_reduce_kill_switches_all_off": "ok",
+   "crates/cli-harness/src/doctor_collector.rs::test_reduce_kill_switches_any_on": "ok",
+   "crates/cli-harness/src/doctor_collector.rs::test_reduce_kill_switches_unknown": "ok"
+  },
+  "failed_tests": [],
+  "fix": "ca5f85baaa2b",
+  "oracle_holds": true,
+  "seconds": 7,
+  "tests_run": 347
+ },
+ "impl-a2r-feat-doctor-skeleton": {
+  "cargo_exit": 0,
+  "compiled": true,
+  "fail_to_pass": {
+   "crates/cli-harness/src/doctor.rs::test_exit_code_reduction_priority": "ok",
+   "crates/cli-harness/src/doctor.rs::test_findings_sorted_deterministically": "ok",
+   "crates/cli-harness/src/doctor.rs::test_format_heading_never_says_protected": "ok",
+   "crates/cli-harness/src/doctor.rs::test_json_serialization_roundtrip": "ok",
+   "crates/cli-harness/src/doctor.rs::test_reduction_combinations_with_broken_and_disabled": "ok",
+   "crates/cli-harness/src/doctor.rs::test_skeleton_has_required_fields": "ok",
+   "crates/cli-harness/src/doctor.rs::test_skeleton_never_fakes_success": "ok",
+   "crates/cli-harness/src/doctor.rs::test_skeleton_uses_nulls_not_false": "ok"
+  },
+  "failed_tests": [],
+  "fix": "b528dfeb42d5",
+  "oracle_holds": true,
+  "seconds": 15,
+  "tests_run": 344
+ },
+ "impl-a2r-feat-feedback-context": {
+  "cargo_exit": 0,
+  "compiled": true,
+  "fail_to_pass": {
+   "crates/agent-core/src/context.rs::pack_with_feedback_preserves_governance_result": "ok"
+  },
+  "failed_tests": [],
+  "fix": "3660c16427aa",
+  "oracle_holds": true,
+  "seconds": 11,
+  "tests_run": 331
+ },
+ "impl-a2r-feat-feedback-turns": {
+  "cargo_exit": 0,
+  "compiled": true,
+  "fail_to_pass": {
+   "crates/agent-core/src/lib.rs::governance_outcomes_reach_the_next_model_turn_without_an_observer": "ok"
+  },
+  "failed_tests": [],
+  "fix": "c90e23cf4f4d",
+  "oracle_holds": true,
+  "seconds": 9,
+  "tests_run": 331
+ },
+ "impl-a2r-feat-first-proof-demo": {
+  "cargo_exit": 0,
+  "compiled": true,
+  "fail_to_pass": {
+   "crates/cli-harness/src/hostkit.rs::kernel_path_strings_use_the_platform_neutral_separator": "ok",
+   "crates/cli-harness/tests/demo.rs::demo_without_init_fails_with_one_clear_next_step": "ok",
+   "crates/cli-harness/tests/demo.rs::init_then_demo_proves_kernel_without_side_effects": "ok"
+  },
+  "failed_tests": [],
+  "fix": "997275480dde",
+  "oracle_holds": true,
+  "seconds": 15,
+  "tests_run": 336
+ },
+ "impl-a2r-feat-grant-mode": {
+  "cargo_exit": 0,
+  "compiled": true,
+  "fail_to_pass": {
+   "crates/cli-harness/tests/cc_hook.rs::grant_mode_emits_explicit_allow_on_clean_action": "ok",
+   "crates/cli-harness/tests/cc_hook.rs::grant_mode_still_denies_tainted_egress": "ok"
+  },
+  "failed_tests": [],
+  "fix": "fa834e584026",
+  "oracle_holds": true,
+  "seconds": 9,
+  "tests_run": 157
+ },
+ "impl-a2r-feat-init": {
+  "cargo_exit": 0,
+  "compiled": true,
+  "fail_to_pass": {
+   "crates/cli-harness/tests/init.rs::dry_run_writes_nothing": "ok",
+   "crates/cli-harness/tests/init.rs::embedded_starter_matches_the_shipped_one": "ok",
+   "crates/cli-harness/tests/init.rs::grant_mode_reaches_the_shim": "ok",
+   "crates/cli-harness/tests/init.rs::init_governs_an_empty_directory_with_nothing_but_the_binary": "ok",
+   "crates/cli-harness/tests/init.rs::init_is_idempotent": "ok",
+   "crates/cli-harness/tests/init.rs::init_never_clobbers_a_tuned_manifest_without_force": "ok",
+   "crates/cli-harness/tests/init.rs::init_preserves_foreign_hooks_and_settings": "ok",
+   "crates/cli-harness/tests/init.rs::shim_carries_the_kill_switch_and_fails_open": "ok",
+   "crates/cli-harness/tests/init.rs::the_written_manifest_actually_compiles": "ok"
+  },
+  "failed_tests": [],
+  "fix": "051b4202561d",
+  "oracle_holds": true,
+  "seconds": 5,
+  "tests_run": 239
+ },
+ "impl-a2r-feat-mcp-gateway": {
+  "cargo_exit": 0,
+  "compiled": true,
+  "fail_to_pass": {
+   "crates/cli-harness/tests/mcp_gateway.rs::clean_session_allows_read_and_comment_but_destructive_is_absent": "ok",
+   "crates/cli-harness/tests/mcp_gateway.rs::tainted_session_severs_the_external_write": "ok",
+   "crates/cli-harness/tests/mcp_gateway.rs::tools_list_hides_destructive_tools": "ok"
+  },
+  "failed_tests": [],
+  "fix": "5459d8162354",
+  "oracle_holds": true,
+  "seconds": 7,
+  "tests_run": 107
+ },
+ "impl-a2r-feat-pact-l2": {
+  "cargo_exit": 0,
+  "compiled": true,
+  "fail_to_pass": {
+   "crates/agent-core/src/arg_provenance.rs::arg_derived_from_tainted_output_is_tainted": "ok",
+   "crates/agent-core/src/arg_provenance.rs::clean_arg_verbatim_from_user_request_is_clean": "ok",
+   "crates/agent-core/src/arg_provenance.rs::multi_leaf_arg_is_clean_only_if_all_leaves_clean": "ok",
+   "crates/agent-core/src/arg_provenance.rs::short_values_are_not_evidence": "ok",
+   "crates/agent-core/src/arg_provenance.rs::tainted_wins_when_value_is_in_both_corpora": "ok",
+   "crates/agent-core/src/arg_provenance.rs::unprovable_arg_is_omitted": "ok",
+   "crates/agent-core/src/lib.rs::l2_producer_recovers_user_supplied_url_in_tainted_session": "ok",
+   "crates/world-kernel/src/invariants.rs::clean_target_in_tainted_session_is_recovered": "ok",
+   "crates/world-kernel/src/invariants.rs::literal_pinned_authority_arg_is_clean_by_construction": "ok",
+   "crates/world-kernel/src/invariants.rs::no_roles_falls_back_to_ambient_scalar": "ok",
+   "crates/world-kernel/src/invariants.rs::tainted_content_does_not_trip_the_floor": "ok",
+   "crates/world-kernel/src/invariants.rs::tainted_target_still_blocks": "ok",
+   "crates/world-kernel/src/invariants.rs::unknown_authority_arg_fails_closed_to_ambient": "ok",
+   "crates/world-kernel/src/lib.rs::action_without_roles_keeps_ambient_floor": "ok",
+   "crates/world-kernel/src/lib.rs::l2_recovers_clean_url_in_tainted_session": "ok",
+   "crates/world-kernel/src/lib.rs::l2_still_blocks_tainted_url": "ok"
+  },
+  "failed_tests": [],
+  "fix": "977330ce1fe6",
+  "oracle_holds": true,
+  "seconds": 2,
+  "tests_run": 152
+ },
+ "impl-a2r-feat-roots": {
+  "cargo_exit": 0,
+  "compiled": true,
+  "fail_to_pass": {
+   "crates/cli-harness/src/cc_hook.rs::normalize_dots_collapses_dot_and_dotdot": "ok",
+   "crates/cli-harness/src/cc_hook.rs::resolve_action_path_is_none_for_non_path_tools": "ok",
+   "crates/cli-harness/src/cc_hook.rs::resolve_action_path_reads_file_path_and_absolutizes": "ok",
+   "crates/compiler/src/compile.rs::resolve_root_paths_expands_home_dot_and_relative": "ok",
+   "crates/compiler/src/compile.rs::resolve_root_paths_is_pure_given_inputs": "ok",
+   "crates/harness-preview/src/gate.rs::deny_rule_shadows_a_broader_allow_the_etc_shadow_probe": "ok",
+   "crates/harness-preview/src/gate.rs::in_root_write_is_allowed": "ok",
+   "crates/harness-preview/src/gate.rs::no_resolved_path_is_exempt_the_bash_analog": "ok",
+   "crates/harness-preview/src/gate.rs::ordinary_in_root_read_does_not_taint": "ok",
+   "crates/harness-preview/src/gate.rs::out_of_root_defaults_to_ask": "ok",
+   "crates/harness-preview/src/gate.rs::path_scope_ask_fails_closed_in_background": "ok",
+   "crates/harness-preview/src/gate.rs::read_only_root_allows_read_denies_write": "ok",
+   "crates/harness-preview/src/gate.rs::roots_absent_means_no_path_scope": "ok",
+   "crates/harness-preview/src/gate.rs::taint_source_root_taints_a_read": "ok",
+   "crates/harness-preview/src/gate.rs::write_to_ssh_is_denied_the_grant_mode_blast_radius_fix": "ok"
+  },
+  "failed_tests": [],
+  "fix": "93f46b67fdf7",
+  "oracle_holds": true,
+  "seconds": 9,
+  "tests_run": 172
+ },
+ "impl-a2r-feat-staged-effect": {
+  "cargo_exit": 0,
+  "compiled": true,
+  "fail_to_pass": {
+   "crates/trace-store/src/staged.rs::argument_mutation_after_staging_is_rejected": "ok",
+   "crates/trace-store/src/staged.rs::authorization_expiry_and_revocation_fail_before_effect": "ok",
+   "crates/trace-store/src/staged.rs::consequence_metadata_and_simulation_are_explicit": "ok",
+   "crates/trace-store/src/staged.rs::duplicate_commit_survives_restart_and_applies_once": "ok",
+   "crates/trace-store/src/staged.rs::malformed_or_unmappable_evidence_fails_closed": "ok",
+   "crates/trace-store/src/staged.rs::stage_is_non_effective_then_commit_emits_causal_receipt": "ok",
+   "crates/trace-store/src/staged.rs::timeout_after_apply_stays_ambiguous_and_is_not_retried": "ok",
+   "crates/trace-store/src/staged.rs::world_and_schema_drift_force_readmission": "ok"
+  },
+  "failed_tests": [],
+  "fix": "4a2c36361fe8",
+  "oracle_holds": true,
+  "seconds": 13,
+  "tests_run": 321
+ },
+ "impl-a2r-feat-wasm-spike": {
+  "cargo_exit": 0,
+  "compiled": true,
+  "fail_to_pass": {
+   "crates/harness-preview/src/lib.rs::decision_matrix_shows_taint_floor": "ok",
+   "crates/harness-preview/src/lib.rs::invalid_manifest_reports_error": "ok",
+   "crates/harness-preview/src/lib.rs::preview_of_default_world_lists_surface_and_decisions": "ok"
+  },
+  "failed_tests": [],
+  "fix": "4ec1890d01d3",
+  "oracle_holds": true,
+  "seconds": 3,
+  "tests_run": 92
+ },
+ "impl-a2r-forged-approval-token": {
+  "cargo_exit": 0,
+  "compiled": true,
+  "fail_to_pass": {
+   "crates/cli-harness/tests/one_kernel.rs::harness_gate_does_not_trust_request_supplied_approval_tokens": "ok"
+  },
+  "failed_tests": [],
+  "fix": "a5908a852417",
+  "oracle_holds": true,
+  "seconds": 4,
+  "tests_run": 173
+ },
+ "impl-a2r-g1-hidden-base": {
+  "cargo_exit": 0,
+  "compiled": true,
+  "fail_to_pass": {
+   "crates/compiler/src/lib.rs::a_base_action_can_stay_in_the_ontology_without_being_projected": "ok",
+   "crates/compiler/src/lib.rs::declaring_projected_true_does_not_change_the_manifest_hash": "ok",
+   "crates/harness-preview/src/gate.rs::a_hidden_backing_action_is_absent_when_called_directly": "ok",
+   "crates/harness-preview/src/gate.rs::the_scoped_verb_over_a_hidden_base_is_allowed_and_lowers_to_it": "ok"
+  },
+  "failed_tests": [],
+  "fix": "f85d51189841",
+  "oracle_holds": true,
+  "seconds": 5,
+  "tests_run": 378
+ },
+ "impl-a2r-g2-effective-call": {
+  "cargo_exit": 0,
+  "compiled": true,
+  "fail_to_pass": {
+   "crates/cli-harness/tests/mcp_gateway_scoped.rs::a_call_needing_runtime_context_is_refused_not_guessed": "ok",
+   "crates/cli-harness/tests/mcp_gateway_scoped.rs::a_hidden_base_action_is_not_listed_and_is_absent_when_called": "ok",
+   "crates/cli-harness/tests/mcp_gateway_scoped.rs::a_scoped_verb_forwards_the_effective_call_not_the_proposal": "ok",
+   "crates/cli-harness/tests/mcp_gateway_scoped.rs::an_unscoped_call_keeps_the_requested_tool_name_after_classification": "ok",
+   "crates/harness-preview/src/gate.rs::a_blocked_call_carries_no_effective_call": "ok",
+   "crates/harness-preview/src/gate.rs::the_effective_call_is_on_the_wire_only_when_present": "ok",
+   "crates/world-kernel/src/spec.rs::effective_call_carries_the_mcp_backing_and_lists_context_refs": "ok",
+   "crates/world-kernel/src/spec.rs::effective_call_of_a_base_action_is_the_call_itself": "ok",
+   "crates/world-kernel/src/spec.rs::effective_call_strips_injects_and_reports": "ok"
+  },
+  "failed_tests": [],
+  "fix": "f85d51189841",
+  "oracle_holds": true,
+  "seconds": 4,
+  "tests_run": 378
+ },
+ "impl-a2r-g8-log-chain": {
+  "cargo_exit": 0,
+  "compiled": true,
+  "fail_to_pass": {
+   "crates/trace-store/src/approval.rs::a_log_ahead_of_its_head_still_loads": "ok",
+   "crates/trace-store/src/approval.rs::a_missing_head_is_refused": "ok",
+   "crates/trace-store/src/approval.rs::a_rolled_back_log_is_refused_by_the_store_that_saw_it": "ok",
+   "crates/trace-store/src/approval.rs::a_saved_genesis_head_cannot_anchor_a_longer_log": "ok",
+   "crates/trace-store/src/approval.rs::deleting_a_middle_line_breaks_the_chain": "ok",
+   "crates/trace-store/src/approval.rs::deleting_the_consumed_line_does_not_revive_the_grant": "ok",
+   "crates/trace-store/src/approval.rs::known_limit_a_matching_old_snapshot_fools_a_new_process": "ok",
+   "crates/trace-store/src/chain.rs::a_deleted_middle_line_breaks_the_chain": "ok",
+   "crates/trace-store/src/chain.rs::a_forged_or_missing_head_is_refused": "ok",
+   "crates/trace-store/src/chain.rs::a_genesis_head_anchors_at_most_one_line": "ok",
+   "crates/trace-store/src/chain.rs::a_line_without_a_link_is_unchained": "ok",
+   "crates/trace-store/src/chain.rs::an_edited_payload_fails_its_mac": "ok",
+   "crates/trace-store/src/chain.rs::an_intact_chain_verifies": "ok",
+   "crates/trace-store/src/chain.rs::ensure_head_refuses_to_re_anchor_a_populated_log": "ok",
+   "crates/trace-store/src/chain.rs::reordered_lines_break_the_chain": "ok",
+   "crates/trace-store/src/chain.rs::the_head_catches_a_cut_tail_and_tolerates_a_crash_ahead": "ok",
+   "crates/trace-store/src/chain.rs::the_high_water_mark_refuses_a_shorter_log": "ok",
+   "crates/trace-store/src/staged.rs::deleting_attempt_lines_does_not_release_the_idempotency_key": "ok"
+  },
+  "failed_tests": [],
+  "fix": "f85d51189841",
+  "oracle_holds": true,
+  "seconds": 9,
+  "tests_run": 378
+ },
+ "impl-a2r-hook-cross-host": {
+  "cargo_exit": 0,
+  "compiled": true,
+  "fail_to_pass": {
+   "crates/cli-harness/tests/init.rs::an_older_hook_entry_is_upgraded_not_duplicated": "ok",
+   "crates/cli-harness/tests/init.rs::the_hook_command_makes_no_assumptions_about_shell_env_or_cwd": "ok",
+   "crates/cli-harness/tests/init.rs::the_shim_governs_without_claude_project_dir_and_from_a_foreign_cwd": "ok"
+  },
+  "failed_tests": [],
+  "fix": "f3cc56b5baa3",
+  "oracle_holds": true,
+  "seconds": 4,
+  "tests_run": 250
+ },
+ "impl-a2r-hook-root-canonicalize": {
+  "cargo_exit": 0,
+  "compiled": true,
+  "fail_to_pass": {
+   "crates/cli-harness/tests/cc_hook.rs::grant_mode_allows_new_file_under_real_project_parent": "ok",
+   "crates/cli-harness/tests/cc_hook.rs::grant_mode_denies_write_through_project_symlink_to_denied_root": "ok"
+  },
+  "failed_tests": [],
+  "fix": "c6eb8a8ca0d2",
+  "oracle_holds": true,
+  "seconds": 2,
+  "tests_run": 196
+ },
+ "impl-a2r-incomplete-context": {
+  "cargo_exit": 0,
+  "compiled": true,
+  "fail_to_pass": {
+   "crates/cli-harness/tests/one_kernel.rs::harness_gate_fails_closed_on_missing_or_malformed_context": "ok",
+   "crates/harness-preview/src/gate.rs::deserializes_from_wire_json_but_missing_context_fails_closed": "ok",
+   "crates/harness-preview/src/gate.rs::malformed_source_channel_fails_closed": "ok",
+   "crates/harness-preview/src/gate.rs::malformed_taint_fails_closed": "ok",
+   "crates/harness-preview/src/gate.rs::missing_source_channel_fails_closed": "ok",
+   "crates/harness-preview/src/gate.rs::no_resolved_path_is_exempt_for_non_file_actions": "ok"
+  },
+  "failed_tests": [],
+  "fix": "9058b5df7079",
+  "oracle_holds": true,
+  "seconds": 6,
+  "tests_run": 179
+ },
+ "impl-a2r-init-review-findings": {
+  "cargo_exit": 0,
+  "compiled": true,
+  "fail_to_pass": {
+   "crates/cli-harness/tests/init.rs::a_narrow_matcher_does_not_satisfy_init": "ok",
+   "crates/cli-harness/tests/init.rs::a_star_matcher_still_satisfies_init": "ok",
+   "crates/cli-harness/tests/init.rs::init_refuses_a_symlinked_claude_directory": "ok",
+   "crates/cli-harness/tests/init.rs::init_refuses_to_write_through_a_symlink": "ok",
+   "crates/cli-harness/tests/init.rs::symlink_refusal_writes_nothing_at_all": "ok"
+  },
+  "failed_tests": [],
+  "fix": "9061dc8b2dce",
+  "oracle_holds": true,
+  "seconds": 10,
+  "tests_run": 244
+ },
+ "impl-a2r-installer-hook-merge": {
+  "cargo_exit": 0,
+  "compiled": true,
+  "fail_to_pass": {
+   "crates/cli-harness/tests/install_governance.rs::installer_adds_real_hook_when_fake_world_gate_command_exists": "ok",
+   "crates/cli-harness/tests/install_governance.rs::installer_does_not_duplicate_existing_real_hook": "ok"
+  },
+  "failed_tests": [],
+  "fix": "3649fa47702c",
+  "oracle_holds": true,
+  "seconds": 8,
+  "tests_run": 194
+ },
+ "impl-a2r-kill-switch-location": {
+  "cargo_exit": 0,
+  "compiled": true,
+  "fail_to_pass": {
+   "crates/cli-harness/tests/init.rs::an_in_project_gate_off_file_no_longer_disables_governance": "ok",
+   "crates/cli-harness/tests/init.rs::the_kill_switch_paths_are_outside_the_project": "ok",
+   "crates/cli-harness/tests/init.rs::the_out_of_project_kill_switch_still_works": "ok"
+  },
+  "failed_tests": [],
+  "fix": "5f0baba59e60",
+  "oracle_holds": true,
+  "seconds": 2,
+  "tests_run": 247
+ },
+ "impl-a2r-lock-contention": {
+  "cargo_exit": 0,
+  "compiled": true,
+  "fail_to_pass": {
+   "crates/trace-store/src/approval.rs::lock_waits_for_current_owner": "ok"
+  },
+  "failed_tests": [],
+  "fix": "5c890f84dc3c",
+  "oracle_holds": true,
+  "seconds": 7,
+  "tests_run": 322
+ },
+ "impl-a2r-mcp-read-taints": {
+  "cargo_exit": 0,
+  "compiled": true,
+  "fail_to_pass": {
+   "crates/cli-harness/tests/mcp_gateway.rs::upstream_read_taints_the_session_and_severs_the_next_write": "ok",
+   "crates/harness-preview/src/gate.rs::mcp_backed_action_taints_the_session_on_allow": "ok"
+  },
+  "failed_tests": [],
+  "fix": "823cd11eee2a",
+  "oracle_holds": true,
+  "seconds": 2,
+  "tests_run": 225
+ },
+ "impl-a2r-mrtr-relay": {
+  "cargo_exit": 0,
+  "compiled": true,
+  "fail_to_pass": {
+   "crates/cli-harness/tests/mcp_gateway_mrtr.rs::an_input_required_result_is_not_relayed_to_the_client": "ok",
+   "crates/cli-harness/tests/mcp_gateway_mrtr.rs::the_refusal_is_an_error_that_names_itself": "ok"
+  },
+  "failed_tests": [],
+  "fix": "c9082c9ecd5a",
+  "oracle_holds": true,
+  "seconds": 10,
+  "tests_run": 230
+ },
+ "impl-a2r-old-log-misdiagnosis": {
+  "cargo_exit": 0,
+  "compiled": true,
+  "fail_to_pass": {
+   "crates/trace-store/tests/legacy_upgrade.rs::a_0_4_1_approval_log_is_refused_as_old_rather_than_as_forged": "ok"
+  },
+  "failed_tests": [],
+  "fix": "355c857d97ec",
+  "oracle_holds": true,
+  "seconds": 15,
+  "tests_run": 331
+ },
+ "impl-a2r-proxy-drops-fields": {
+  "cargo_exit": 0,
+  "compiled": true,
+  "fail_to_pass": {
+   "crates/cli-harness/tests/mcp_gateway.rs::tools_call_forwards_request_meta_upstream": "ok",
+   "crates/cli-harness/tests/mcp_gateway.rs::tools_list_passes_upstream_sibling_fields_through": "ok"
+  },
+  "failed_tests": [],
+  "fix": "cbd9541e6409",
+  "oracle_holds": true,
+  "seconds": 5,
+  "tests_run": 223
+ },
+ "impl-a2r-roots-conformance": {
+  "cargo_exit": 0,
+  "compiled": true,
+  "fail_to_pass": {
+   "crates/cli-harness/tests/one_kernel.rs::both_host_adapters_agree_on_path_scope": "ok",
+   "crates/cli-harness/tests/one_kernel.rs::every_entry_point_agrees_on_path_scope": "ok"
+  },
+  "failed_tests": [],
+  "fix": "3158b6ffdd07",
+  "oracle_holds": true,
+  "seconds": 11,
+  "tests_run": 259
+ },
+ "impl-a2r-sandbox-fail-closed": {
+  "cargo_exit": 0,
+  "compiled": true,
+  "fail_to_pass": {
+   "crates/executor/src/lib.rs::command_execute_without_sandbox_fails_closed": "ok",
+   "crates/executor/src/lib.rs::command_simulate_is_allowed_when_fail_closed": "ok"
+  },
+  "failed_tests": [],
+  "fix": "cfd297a3d98d",
+  "oracle_holds": true,
+  "seconds": 2,
+  "tests_run": 200
+ },
+ "impl-a2r-secrets-in-values": {
+  "cargo_exit": 0,
+  "compiled": true,
+  "fail_to_pass": {
+   "crates/trace-store/src/secrets.rs::a_password_in_a_url_is_masked_and_the_user_is_kept": "ok",
+   "crates/trace-store/src/secrets.rs::authorization_headers_are_masked_but_the_command_survives": "ok",
+   "crates/trace-store/src/secrets.rs::aws_and_google_key_shapes_are_masked": "ok",
+   "crates/trace-store/src/secrets.rs::issuer_prefixed_tokens_are_masked_in_a_command": "ok",
+   "crates/trace-store/src/secrets.rs::masking_is_idempotent": "ok",
+   "crates/trace-store/src/secrets.rs::ordinary_values_are_left_alone": "ok",
+   "crates/trace-store/src/secrets.rs::private_key_blocks_are_masked_whole": "ok",
+   "crates/trace-store/src/secrets.rs::query_parameter_secrets_are_masked": "ok"
+  },
+  "failed_tests": [],
+  "fix": "2493757dcab1",
+  "oracle_holds": true,
+  "seconds": 22,
+  "tests_run": 289
+ },
+ "impl-a2r-shim-resolution": {
+  "cargo_exit": 0,
+  "compiled": true,
+  "fail_to_pass": {
+   "crates/cli-harness/tests/trusted_harness_resolution.rs::claude_sh_shim_does_not_search_project_target_and_honors_absolute_override": "ok",
+   "crates/cli-harness/tests/trusted_harness_resolution.rs::installer_generated_shim_uses_installed_harness_not_project_target": "ok",
+   "crates/cli-harness/tests/trusted_harness_resolution.rs::opencode_plugin_does_not_search_project_targets": "ok",
+   "crates/cli-harness/tests/trusted_harness_resolution.rs::python_compat_shim_does_not_search_project_target_and_honors_absolute_override": "ok"
+  },
+  "failed_tests": [],
+  "fix": "88820725ab31",
+  "oracle_holds": true,
+  "seconds": 2,
+  "tests_run": 192
+ },
+ "impl-a2r-source-channel-declared": {
+  "cargo_exit": 0,
+  "compiled": true,
+  "fail_to_pass": {
+   "crates/cli-harness/tests/cc_hook.rs::a_lower_trust_source_channel_shrinks_the_capability_surface": "ok",
+   "crates/cli-harness/tests/cc_hook.rs::an_undeclared_source_channel_fails_closed": "ok"
+  },
+  "failed_tests": [],
+  "fix": "71b2c58b8a51",
+  "oracle_holds": true,
+  "seconds": 13,
+  "tests_run": 304
+ },
+ "impl-a2r-source-channel-policy": {
+  "cargo_exit": 0,
+  "compiled": true,
+  "fail_to_pass": {
+   "crates/compiler/src/lib.rs::validate_rejects_unknown_or_duplicate_channel_names": "ok",
+   "crates/harness-preview/src/gate.rs::manifest_channel_policy_controls_trust_and_taint": "ok"
+  },
+  "failed_tests": [],
+  "fix": "b8bd844f0833",
+  "oracle_holds": true,
+  "seconds": 6,
+  "tests_run": 181
+ },
+ "impl-a2r-spec-arg-sealing": {
+  "cargo_exit": 0,
+  "compiled": true,
+  "fail_to_pass": {
+   "crates/world-kernel/src/schema.rs::additional_properties_can_be_explicitly_allowed": "ok",
+   "crates/world-kernel/src/schema.rs::undeclared_properties_are_rejected_by_default": "ok",
+   "crates/world-kernel/src/spec.rs::apply_patch_hidden_execution_fields_are_rejected_by_descriptor": "ok",
+   "crates/world-kernel/src/spec.rs::local_handler_cannot_consume_additional_properties": "ok",
+   "crates/world-kernel/src/spec.rs::run_command_hidden_argv_is_rejected_by_descriptor": "ok"
+  },
+  "failed_tests": [],
+  "fix": "e2bd96585921",
+  "oracle_holds": true,
+  "seconds": 1,
+  "tests_run": 188
+ },
+ "impl-a2r-taint-sidecar-fail-closed": {
+  "cargo_exit": 0,
+  "compiled": true,
+  "fail_to_pass": {
+   "crates/cli-harness/tests/agy_hook.rs::unwritable_taint_sidecar_denies_the_escalating_call": "ok",
+   "crates/cli-harness/tests/cc_hook.rs::unwritable_taint_sidecar_denies_the_escalating_call": "ok",
+   "crates/cli-harness/tests/cc_hook.rs::unwritable_taint_sidecar_still_passes_a_clean_read_through": "ok"
+  },
+  "failed_tests": [],
+  "fix": "941b22e2b52c",
+  "oracle_holds": true,
+  "seconds": 2,
+  "tests_run": 257
+ },
+ "impl-a2r-unmatched-shell": {
+  "cargo_exit": 0,
+  "compiled": true,
+  "fail_to_pass": {
+   "crates/harness-preview/src/gate.rs::default_world_run_command_fails_closed_on_shell_bypasses": "ok",
+   "crates/harness-preview/src/gate.rs::tainted_unclassified_shell_is_denied_by_the_taint_floor": "ok"
+  },
+  "failed_tests": [],
+  "fix": "b3e3b0fc977a",
+  "oracle_holds": true,
+  "seconds": 4,
+  "tests_run": 183
+ },
+ "impl-a2r-web-egress-and-kill": {
+  "cargo_exit": 0,
+  "compiled": true,
+  "fail_to_pass": {
+   "crates/executor/src/handlers/web.rs::a_url_without_a_host_is_refused": "ok",
+   "crates/executor/src/handlers/web.rs::allowlisted_host_is_permitted": "ok",
+   "crates/executor/src/handlers/web.rs::disabled_policy_refuses_every_url": "ok",
+   "crates/executor/src/handlers/web.rs::host_parsing_is_case_and_trailing_dot_insensitive": "ok",
+   "crates/executor/src/handlers/web.rs::local_and_metadata_targets_need_naming_explicitly": "ok",
+   "crates/executor/src/handlers/web.rs::suffix_entries_match_subdomains_and_bare_entries_do_not": "ok",
+   "crates/executor/src/handlers/web.rs::unlisted_host_is_refused": "ok",
+   "crates/executor/src/handlers/web.rs::userinfo_cannot_impersonate_an_allowed_host": "ok",
+   "crates/executor/src/lib.rs::a_timed_out_command_kills_its_descendants": "ok",
+   "crates/executor/src/lib.rs::a_timed_out_command_returns_even_when_a_descendant_holds_the_pipe": "ok",
+   "crates/executor/src/lib.rs::web_handler_refuses_a_fetch_when_network_is_disabled": "ok",
+   "crates/executor/src/lib.rs::web_handler_refuses_a_host_outside_the_allowlist": "ok",
+   "crates/executor/src/lib.rs::web_handler_returns_tainted_content": "ok"
+  },
+  "failed_tests": [],
+  "fix": "e519f4197f75",
+  "oracle_holds": true,
+  "seconds": 5,
+  "tests_run": 281
+ },
+ "impl-a2r-word-boundary-classify": {
+  "cargo_exit": 0,
+  "compiled": true,
+  "fail_to_pass": {
+   "crates/cli-harness/src/cc_hook.rs::destructive_commands_classify_as_destructive": "ok",
+   "crates/cli-harness/src/cc_hook.rs::egress_commands_classify_as_network": "ok",
+   "crates/cli-harness/src/cc_hook.rs::non_bash_tools_pass_through_unchanged": "ok",
+   "crates/cli-harness/src/cc_hook.rs::ordinary_commands_classify_as_plain_bash": "ok",
+   "crates/cli-harness/src/cc_hook.rs::substrings_of_larger_words_do_not_false_match": "ok",
+   "crates/cli-harness/tests/opencode_world.rs::clean_reads_and_searches_allow": "ok",
+   "crates/cli-harness/tests/opencode_world.rs::clean_webfetch_allows_and_escalates_session_taint": "ok",
+   "crates/cli-harness/tests/opencode_world.rs::destructive_bash_asks_interactively_but_fails_closed_in_background": "ok",
+   "crates/cli-harness/tests/opencode_world.rs::subagent_spawn_allows_when_clean": "ok",
+   "crates/cli-harness/tests/opencode_world.rs::taint_floor_severs_egress": "ok",
+   "crates/cli-harness/tests/opencode_world.rs::unknown_tool_is_absent_not_denied": "ok",
+   "crates/cli-harness/tests/opencode_world.rs::workspace_writes_allowed_even_when_tainted": "ok"
+  },
+  "failed_tests": [],
+  "fix": "dcc4d18c663d",
+  "oracle_holds": true,
+  "seconds": 6,
+  "tests_run": 123
+ },
+ "impl-a2r-world-owned-schemas": {
+  "cargo_exit": 0,
+  "compiled": true,
+  "fail_to_pass": {
+   "crates/cli-harness/tests/mcp_gateway_poisoned.rs::declared_arguments_are_forwarded_unchanged": "ok",
+   "crates/cli-harness/tests/mcp_gateway_poisoned.rs::poisoned_argument_is_denied_and_never_forwarded": "ok",
+   "crates/cli-harness/tests/mcp_gateway_poisoned.rs::poisoned_upstream_schema_is_not_republished": "ok"
+  },
+  "failed_tests": [],
+  "fix": "64c3d99d3951",
+  "oracle_holds": true,
+  "seconds": 2,
+  "tests_run": 228
+ }
+}

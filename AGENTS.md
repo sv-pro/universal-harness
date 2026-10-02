@@ -15,6 +15,8 @@ registry/agents.yaml         the user's agents: capabilities, config locations, 
 registry/projects.yaml       the user's described repos, so `uh -p <id>` works anywhere
 .uh/project.yaml             this repo's own manifest (each project keeps its own in .uh/)
 test/fixtures/               a snapshot of ai2rules' manifest, the model's first instance
+design/                      long-range design (was coding-agent-harness): HLD, design guide,
+                             ai2rules stage worlds, eval sets; its own AGENTS.md applies there
 src/schema.ts                zod schemas, one block per model section
 src/validate.ts              cross-reference checks (manifest × registry)
 src/brief.ts                 manifest → agent-facing brief (markdown)

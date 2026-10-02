@@ -20,9 +20,23 @@ Updated 2026-10-02 by Claude Code (desktop). Keep this current as you work.
 - Linear: URL checked against docs (Codex), no live connection yet. `validate`
   counts `.mcp.json` as reach; that is configuration, not evidence of access.
 
+- 2026-10-02: **manifests moved into their repos** (`.uh/project.yaml`; harness keeps
+  `registry/agents.yaml` + `registry/projects.yaml`); uh falls back to the default
+  branch's manifest when a checkout lacks it. ai2rules' manifest is in PR #97: until it
+  merges, `uh` finds no manifest in ai2rules except on that branch.
+- 2026-10-02: **coding-agent-harness merged in as `design/`** (subtree, history kept,
+  pushed) **without the design guide**: it distills two books, one a Manning MEAP
+  (personal-use license), so it was filtered out of the imported history and is
+  git-ignored in `design/docs/design-guide/`; its home stays the local
+  `coding-agent-harness` repo. Its open items, from
+  `design/HANDOFF-2026-09-26.md`: eval step 0 (58 + 90 candidate cases) awaits the owner's
+  admit/reject, then a baseline run; world lint, trace-replay gate, other stage worlds,
+  L0 sandbox and evidence store are specified, not built.
+
 ## Open questions for the maintainer
 
-1. After connecting Claude Code to Linear (docs/claude-code-linear.md): read AI2's
+1. Merge sv-pro/ai2rules#97 (needed for `uh` to find ai2rules' manifest on main).
+2. After connecting Claude Code to Linear (docs/claude-code-linear.md): read AI2's
    workflow statuses so the `flywheel` and `change` flows can be mapped.
 
 ## Next

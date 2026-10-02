@@ -216,6 +216,16 @@ from §2 with a time trigger.
    to the agents: the manifest names a connection (`tool: linear`), the catalog says
    how to reach it, the registry says where each agent keeps it.
 
+## Agreement with the long-range design
+
+`design/docs/HLD.md` (written separately, before this model) reaches several of the same
+categories from the other end: a Project Profile kept **in the project's repository**
+(here `.uh/project.yaml`), external services as **roles** filled by interchangeable
+products (here `kind` vs `provider`), knowledge organized by **authority**, not topic
+(§2), and protected paths and a consequence map (here procedures with `when.paths`, and
+policy). Where they meet, that is two derivations agreeing; where the HLD goes further
+(orchestrator, gateways, verifier service), it is direction, not a commitment.
+
 ## Open points (to be settled by a second project, not by guessing)
 
 - Are flows per project, or a shared library with per-project overrides? ai2rules

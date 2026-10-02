@@ -40,5 +40,10 @@ block in `AGENTS.md`, one per agent-specific entry file (`CLAUDE.md`), `.uh/brie
 and missing servers in `.mcp.json`. Hand edits to its blocks are detected and refused.
 User-level agent config (Codex, Grok Bot) is printed as manual steps.
 
+`design/` holds the long-range design this tool may grow into (it was the
+`coding-agent-harness` repository): a high-level design for agentic continuous software
+delivery, the design guide behind it, ai2rules stage worlds and eval sets. The tool takes
+parts of it only when real use calls for them.
+
 Status: model, `validate`, `brief`, `pickup`, `provision`. This repo provisions itself
 (`npm run check` fails if its generated files are stale).
