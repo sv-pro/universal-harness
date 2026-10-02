@@ -19,7 +19,7 @@ Updated 2026-10-02 by Claude Code (desktop). Keep this current as you work.
 
 ## Open questions for the maintainer
 
-1. Review and merge sv-pro/ai2rules#96 (provisioning, megaphone rebind, FLYWHEEL.md).
+1. Review and merge sv-pro/ai2rules#96 (provisioning, megaphone → Claude Code, critic → Codex first, FLYWHEEL.md).
 2. After connecting Claude Code to Linear (docs/claude-code-linear.md): read AI2's
    workflow statuses so the `flywheel` and `change` flows can be mapped.
 
