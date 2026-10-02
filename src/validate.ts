@@ -1,12 +1,16 @@
 // Cross-reference checks between a project manifest and the agent registry.
 // Schema shape is checked at load time; this is about the parts fitting together.
-import { existsSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { BUILTIN_KEYS, type Access, type Agent, type AgentRegistry, type Project, type Resource } from "./schema.ts";
 
 export type Finding = { level: "error" | "warn" | "info"; where: string; message: string };
 
-export type ValidateOptions = { checkPaths?: boolean };
+export type ValidateOptions = {
+  checkPaths?: boolean;
+  /** MCP servers an agent gets from the project repo itself (e.g. .mcp.json) */
+  projectMcp?: (agent: Agent) => string[];
+};
 
 export function validate(p: Project, reg: AgentRegistry, opts: ValidateOptions = {}): Finding[] {
   const out: Finding[] = [];
@@ -149,7 +153,7 @@ export function validate(p: Project, reg: AgentRegistry, opts: ValidateOptions =
       for (const u of r.uses) {
         const res = resources.get(u);
         if (!res) continue;
-        const gap = reachGap(a, res);
+        const gap = reachGap(a, res, opts.projectMcp?.(a) ?? []);
         if (gap) warn(where, `${a.id} cannot reach '${u}' (needs ${gap})`);
       }
     }
@@ -172,19 +176,32 @@ export function validate(p: Project, reg: AgentRegistry, opts: ValidateOptions =
   return out;
 }
 
-/** What an agent lacks to reach a resource, or undefined if some path works. */
-export function reachGap(agent: Agent, res: Resource): string | undefined {
+/** What an agent lacks to reach a resource, or undefined if some path works.
+ *  `extraMcp`: servers the agent gets from the project repo (provisioned). */
+export function reachGap(agent: Agent, res: Resource, extraMcp: string[] = []): string | undefined {
   const paths = res.access.filter((x) => x.actor === "agent");
   if (!paths.length) return undefined; // human-only: not a gap, a handover point
   if (agent.connections.native.includes(res.provider)) return undefined;
-  if (paths.some((x) => canUse(agent, x))) return undefined;
+  if (paths.some((x) => canUse(agent, x, extraMcp))) return undefined;
   return paths.map((x) => `${x.via}:${x.tool ?? "?"}`).join(" or ");
 }
 
-function canUse(agent: Agent, x: Access): boolean {
+/** Server names in the agent's project-scoped MCP file, if the repo has one. */
+export function projectMcpServers(p: Project, agent: Agent): string[] {
+  const pm = agent.project_mcp;
+  const file = pm && join(p.project.repo.path, pm.path);
+  if (!file || !existsSync(file)) return [];
+  try {
+    return Object.keys((JSON.parse(readFileSync(file, "utf8")) as { mcpServers?: object }).mcpServers ?? {});
+  } catch {
+    return [];
+  }
+}
+
+function canUse(agent: Agent, x: Access, extraMcp: string[]): boolean {
   switch (x.via) {
     case "mcp":
-      return !!x.tool && agent.connections.mcp.includes(x.tool);
+      return !!x.tool && (agent.connections.mcp.includes(x.tool) || extraMcp.includes(x.tool));
     case "cli":
       return !!x.tool && agent.connections.cli.includes(x.tool);
     case "ci": // reached by pushing to the code host, which every coding agent does

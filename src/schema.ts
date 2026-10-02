@@ -16,7 +16,11 @@ export const Agent = z.strictObject({
   instructions: z.strictObject({
     entry: z.string(), // file the agent reads first, e.g. "AGENTS.md"
     via: z.string().optional(), // how it reaches AGENTS.md, e.g. "CLAUDE.md imports @AGENTS.md"
+    imports: z.string().optional(), // line that makes a new entry file include AGENTS.md, e.g. "@AGENTS.md"
+    max_bytes: z.number().int().positive().optional(), // the agent truncates its entry file beyond this
   }),
+  // Project-scoped MCP config the agent reads from the repo, if it has one.
+  project_mcp: z.strictObject({ path: z.string(), format: z.enum(["mcp-json", "gemini-settings"]) }).optional(),
   extensions: z.array(z.string()).default([]),
   mcp_config: z.string().optional(),
   // Branch prefixes this agent pushes under, e.g. Grok Bot pushes `cursor/...`.
@@ -33,7 +37,22 @@ export const Agent = z.strictObject({
 });
 export type Agent = z.infer<typeof Agent>;
 
-export const AgentRegistry = z.strictObject({ agents: z.array(Agent).min(1) });
+// MCP servers the user can connect agents to, and how each agent gets them.
+export const Connection = z.strictObject({
+  id: Id,
+  name: z.string(),
+  url: z.string().optional(), // remote MCP endpoint (streamable HTTP); absent = no portable config
+  auth: z.enum(["oauth", "token", "none"]).default("oauth"),
+  verified: z.boolean().default(false), // url checked against the provider's docs/a working client
+  per_agent: z.record(z.string(), z.string()).default({}), // agent id -> how to connect when not by url
+  note: z.string().optional(),
+});
+export type Connection = z.infer<typeof Connection>;
+
+export const AgentRegistry = z.strictObject({
+  agents: z.array(Agent).min(1),
+  connections: z.array(Connection).default([]),
+});
 export type AgentRegistry = z.infer<typeof AgentRegistry>;
 
 // ------------------------------------------------------------- resources (§1)

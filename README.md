@@ -14,17 +14,30 @@ This repo holds that model and a small tool around it.
 
 ```bash
 npm install
-node src/cli.ts validate projects/ai2rules/project.yaml        # gaps: reach, bindings, continuity
-node src/cli.ts brief projects/ai2rules/project.yaml           # the agent-facing brief
-node src/cli.ts brief projects/ai2rules/project.yaml --agent grok-bot
-node src/cli.ts pickup projects/ai2rules/project.yaml "#95" --agent claude-code   # continue Grok Bot's PR
-node src/cli.ts pickup projects/ai2rules/project.yaml AI2-25                      # parent key: lists its PRs
-node src/cli.ts pickup projects/universal-harness/project.yaml                    # the checked-out branch
+npm link                       # optional: puts `uh` on PATH (Node >= 24 runs the TypeScript directly)
+```
+
+Inside a described repo, `uh` finds the project by the current directory; elsewhere,
+pass `-p <id>` (a directory under `projects/`) or a manifest path.
+
+```bash
+uh validate -p ai2rules                    # gaps: reach, bindings, continuity
+uh brief -p ai2rules --agent grok-bot      # the brief, projected for one agent
+uh pickup "#95" --agent claude-code        # continue Grok Bot's PR (run inside ai2rules)
+uh pickup AI2-25                           # parent key: lists its PRs
+uh provision                               # dry run: what would be written into the repo
+uh provision --show                        # ... and the generated text
+uh provision --write                       # write it; --check fails if anything is stale
 ```
 
 `pickup` is read-only (it runs `git fetch` unless `--no-fetch`). It uses your `gh`
 login for GitHub and `LINEAR_API_KEY` for Linear; whatever it cannot read is listed
 under Gaps instead of guessed.
 
-Status: model, `validate`, `brief`, `pickup`. Next: provisioning each agent's native
-config from the manifest.
+`provision` writes only inside the project's repo, and only what it owns: a marked
+block in `AGENTS.md`, one per agent-specific entry file (`CLAUDE.md`), `.uh/brief.md`,
+and missing servers in `.mcp.json`. Hand edits to its blocks are detected and refused.
+User-level agent config (Codex, Grok Bot) is printed as manual steps.
+
+Status: model, `validate`, `brief`, `pickup`, `provision`. This repo provisions itself
+(`npm run check` fails if its generated files are stale).

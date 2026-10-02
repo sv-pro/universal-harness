@@ -1,4 +1,4 @@
-# The user's agents, defined once and shared by every project.
+# The user's agents and MCP connections, defined once and shared by every project.
 # `connections` are declared, not detected: what each agent can reach today.
 # Last checked 2026-10-02 on the Windows host (see docs/model.md §7).
 
@@ -12,6 +12,8 @@ agents:
     instructions:
       entry: CLAUDE.md
       via: "CLAUDE.md imports @AGENTS.md"
+      imports: "@AGENTS.md"
+    project_mcp: { path: .mcp.json, format: mcp-json }
     extensions: [hooks, subagents, commands, skills, plugins, mcp]
     mcp_config: ".mcp.json (project), ~/.claude.json (user), claude.ai connectors (account)"
     branch_prefixes: [claude]
@@ -29,6 +31,7 @@ agents:
     capabilities: [code, review, computer-use]
     instructions:
       entry: AGENTS.md
+      max_bytes: 32768   # project_doc_max_bytes default; unverified against the installed version
     extensions: [skills, rules, plugins, automations, mcp]
     mcp_config: "~/.codex/config.toml [mcp_servers]"
     branch_prefixes: [codex]
@@ -73,3 +76,22 @@ agents:
     notes:
       - "Hook commands run with cwd = the directory holding hooks.json, not the repo root."
       - "Print mode (-p) ignores project hooks unless --add-dir <repo> is passed."
+
+# MCP servers by name, as resources refer to them (`access: {via: mcp, tool: <id>}`).
+# `verified: false` = taken from memory of the provider's docs; check before relying on it.
+connections:
+  - id: linear
+    name: Linear
+    url: https://mcp.linear.app/mcp
+    auth: oauth
+    verified: false
+  - id: github
+    name: GitHub
+    url: https://api.githubcopilot.com/mcp/
+    auth: oauth
+    verified: false
+  - id: google-drive
+    name: Google Drive
+    per_agent:
+      claude-code: "claude.ai connector: Settings → Connectors → Google Drive"
+    note: No portable MCP endpoint; each agent has its own integration, if any.

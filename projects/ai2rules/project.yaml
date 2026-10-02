@@ -323,7 +323,7 @@ continuity:
     - level: session
       location: HANDOFF.md on the working branch
       path: HANDOFF.md
-      cadence: at the end of a session (today); should be after every meaningful step
+      cadence: after every meaningful step, not only at the end of a session
       reachable_by: [local]
     - level: item
       location: the item's _tasks file (appended summary)

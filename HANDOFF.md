@@ -4,25 +4,28 @@ Updated 2026-10-02 by Claude Code (desktop). Keep this current as you work.
 
 ## State
 
-- `main`: model, registry, two manifests, `uh validate`, `uh brief`.
-- `claude/pickup` (this branch, committed, not merged): `uh pickup`, identity keys,
-  providers (git, github via gh, linear via API, files). `npm run check` green (15 tests).
-- Tried on real ai2rules data: `#95` (Grok Bot's draft PR), `AI2-25` (parent, 4 PRs),
-  the checked-out branch, the `hero-mcp-server` task. Output reviewed by hand.
-- Linear reading is implemented but **untested against the real API** (no
-  `LINEAR_API_KEY` here); covered only by a mocked test.
+- `main`: model, registry, manifests, `uh validate`, `uh brief`, `uh pickup`.
+- `claude/provision` (this branch): `uh provision` (owned blocks in AGENTS.md and
+  CLAUDE.md, `.uh/brief.md`, `.mcp.json`, manual steps for user-level config),
+  connection catalog in `registry/agents.yaml`, project lookup by cwd/id, `bin: uh`.
+  `npm run check` green (21 tests, includes `provision --check` on this repo).
+- This repo is provisioned (`--write` done here). **ai2rules is not**: dry run only,
+  waiting for the maintainer's go-ahead (it writes AGENTS.md, CLAUDE.md, .uh/brief.md,
+  .mcp.json in that repo).
+- Unverified: the Linear and GitHub MCP URLs in the catalog; Codex's 32 KiB limit;
+  Linear API reading in pickup.
 
 ## Open questions for the maintainer
 
-1. How do agents reach Linear today? No agent declares a Linear connection.
-2. Linear status names for the `flywheel` and `change` flows (mapping unknown).
-3. Grok Bot's "Run failed" for #95 is visible only inside Grok Bot (GitHub: 14/14 green).
-   Can Grok Bot write its run outcome somewhere reachable (PR comment)?
-4. Is `HANDOFF.md` in ai2rules meant to stay uncommitted? Then cloud agents never see it.
+1. Provision ai2rules (`uh provision --write` inside it), and commit there?
+2. How do agents reach Linear today? (Provisioning adds Linear MCP to `.mcp.json` for
+   Claude Code; Codex and Grok Bot get manual steps.)
+3. Linear status names for the `flywheel` and `change` flows.
+4. Antigravity is first choice for megaphone/illustrator but used rarely: rebind?
+5. Is ai2rules' `HANDOFF.md` meant to stay uncommitted? Cloud agents never see it.
 
 ## Next
 
-- Merge `claude/pickup` into `main` (maintainer).
-- Readers for the remaining carrier kinds only when a flow needs them (checkbox, section, tag, version).
-- Provisioning: write each agent's native config (instructions block, MCP) from the manifest.
+- Hooks that enforce the checkpoint obligation (e.g. remind to update HANDOFF.md).
+- Procedures → skills/commands for agents other than Claude Code.
 - A second, different real project to test the model.

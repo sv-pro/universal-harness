@@ -197,8 +197,23 @@ from §2 with a time trigger.
    next transitions with their gates, and attach the branch, PR, checks and continuity
    records. Read-only. Provider code (git, GitHub via `gh`, Linear via its API, files)
    lives in `src/providers/`; the core knows only carriers, flows and keys.
-4. **Provision** (later): write each agent's native config (MCP servers, skills,
-   hooks) from the manifest.
+4. **Provision**: write into the project's repo what every agent reads.
+   - `AGENTS.md` gets a compact **workspace and handoff** block (how to pick up, which
+     records to keep current, how to name things, where state is kept by hand, when to
+     stop and ask, role bindings). Compact because the file is shared with the
+     project's own conventions and Codex reads only its first 32 KiB (ai2rules'
+     `AGENTS.md` is already 19 KB); the full brief goes to `.uh/brief.md`.
+   - An agent with an entry file of its own (Claude Code: `CLAUDE.md`) gets its
+     **projection**: its roles, the resources it cannot reach, its entry points.
+   - MCP servers each agent needs for its roles go into the agent's **project-scoped
+     config** when it has one (`.mcp.json`); otherwise (Codex `config.toml`, Grok Bot
+     settings) they become **manual steps**, because those files are user-level.
+   - The harness owns only marked blocks and its own files, each with a content hash:
+     a hand edit is detected and refused, an existing MCP entry is never changed.
+
+   Connections (MCP endpoints) are a per-user catalog in `registry/agents.yaml`, next
+   to the agents: the manifest names a connection (`tool: linear`), the catalog says
+   how to reach it, the registry says where each agent keeps it.
 
 ## Open points (to be settled by a second project, not by guessing)
 
