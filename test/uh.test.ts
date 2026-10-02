@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { resolve } from "node:path";
 import { test } from "node:test";
 import { brief } from "../src/brief.ts";
 import { loadAgents, loadProject } from "../src/load.ts";
@@ -29,7 +30,7 @@ const base = () =>
   });
 
 test("real manifests have no errors", () => {
-  for (const f of ["projects/ai2rules/project.yaml", "projects/universal-harness/project.yaml"]) {
+  for (const f of ["test/fixtures/ai2rules.project.yaml", ".uh/project.yaml"]) {
     assert.deepEqual(errors(loadProject(f)), [], f);
   }
 });
@@ -88,7 +89,7 @@ test("unreachable and dead-end states are warned", () => {
 });
 
 test("brief projected for an agent shows its roles and reach gaps", () => {
-  const p = loadProject("projects/ai2rules/project.yaml");
+  const p = loadProject("test/fixtures/ai2rules.project.yaml");
   const all = brief(p, registry);
   assert.match(all, /## Work flows/);
   assert.match(all, /\*\*correcting-review\*\*.*Defined in .*review-blog\.md.*Claude Code: `\/review-blog`/);
@@ -101,8 +102,10 @@ test("brief projected for an agent shows its roles and reach gaps", () => {
 
 test("a ~/ repo path is expanded per machine", async () => {
   const { homedir } = await import("node:os");
-  const p = loadProject("projects/ai2rules/project.yaml");
+  const p = loadProject("test/fixtures/ai2rules.project.yaml");
   assert.ok(p.project.repo.path.startsWith(homedir()), p.project.repo.path);
+  const own = loadProject(".uh/project.yaml");
+  assert.equal(resolve(own.project.repo.path), resolve("."), "a manifest in <repo>/.uh/ belongs to that repo");
 });
 
 test("unknown keys are rejected (YAML flow maps split unquoted commas into keys)", () => {
@@ -111,4 +114,13 @@ test("unknown keys are rejected (YAML flow maps split unquoted commas into keys)
     knowledge: [{ ref: "README.md", role: "overview", authority: "descriptive", "test counts": null }],
   });
   assert.equal(r.success, false);
+});
+
+test("locate: a repo directory, a known id, or the repo above the current directory", async () => {
+  const { locate } = await import("../src/locate.ts");
+  const here = resolve(".");
+  assert.equal(resolve(locate(undefined, resolve("src/provision")).project.project.repo.path), here);
+  assert.equal(resolve(locate(".", "/").project.project.repo.path), here);
+  assert.equal(resolve(locate("universal-harness", "/").project.project.repo.path), here);
+  assert.throws(() => locate("no-such-project", "/"), /no project 'no-such-project'/);
 });

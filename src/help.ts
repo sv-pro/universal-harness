@@ -2,8 +2,9 @@
 // deciding whether it may run `uh` needs exactly that (trial #95: one agent read the
 // source to find out, another skipped the tool).
 
-const COMMON = `The project is found from the current directory (the described repo that
-contains it), or given with -p <id> (a directory under projects/) or -p <manifest.yaml>.`;
+const COMMON = `The project is the repo containing the current directory: its manifest is
+.uh/project.yaml. Or pass -p <id> (listed in registry/projects.yaml), -p <repo dir>, or
+-p <manifest.yaml>.`;
 
 export const COMMANDS: Record<string, string> = {
   validate: `uh validate [-p project] [--quiet] [--no-paths]

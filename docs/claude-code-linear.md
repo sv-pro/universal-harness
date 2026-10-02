@@ -53,7 +53,7 @@ after a successful read, record the tested surface and add `linear` to its
 not verification. A working Windows session does not establish WSL or cloud access.
 
 Read actual team statuses before mapping `linear-status` values in
-`projects/ai2rules/project.yaml`. These mappings are currently unspecified.
+ai2rules' `.uh/project.yaml`. These mappings are currently unspecified.
 `src/providers/linear.ts` lowercases status names; use that form in mappings.
 Do not infer Linear statuses from GitHub states. AI2-25 can span multiple PRs,
 so its state alone does not establish the state of every child item.

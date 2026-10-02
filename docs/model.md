@@ -2,12 +2,13 @@
 
 What a coding agent needs to know about a project to pick up work cold, expressed
 as **categories**. Each category below was found as concrete instances in a real
-project first (`ai2rules`, see `projects/ai2rules/project.yaml`) and generalized
+project first (`ai2rules`, see its `.uh/project.yaml`) and generalized
 only as far as those instances justify. When a second project disagrees with a
 category, the category changes, not the project.
 
-A project is described by one manifest (`project.yaml`). Agents are described once,
-per user (`agents.yaml`). The harness reads both and produces each agent's setup.
+A project is described by one manifest, kept in its own repo as `.uh/project.yaml`: the
+project owns its facts. Agents are described once, per user (`registry/agents.yaml`).
+The harness reads both and produces each agent's setup.
 
 ---
 

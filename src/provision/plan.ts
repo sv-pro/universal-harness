@@ -31,7 +31,7 @@ export function plan(p: Project, reg: AgentRegistry, opts: ProvisionOptions = {}
   const active = reg.agents.filter((a) => a.status !== "retired" && p.roles.some((r) => r.agents.includes(a.id)));
 
   // 1. the full brief, a file of its own
-  const b = generatedFile(read(BRIEF_PATH), brief(p, reg), `the ${p.project.id} workspace manifest`, opts);
+  const b = generatedFile(read(BRIEF_PATH), brief(p, reg), ".uh/project.yaml", opts);
   changes.push({ path: BRIEF_PATH, state: b.state, why: "full workspace brief", text: b.text });
 
   // 2. the shared entry file: a compact block every agent reads

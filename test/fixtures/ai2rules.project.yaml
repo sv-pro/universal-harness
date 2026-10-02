@@ -1,6 +1,5 @@
-# ai2rules, described in the workspace model (docs/model.md).
-# Every entry is taken from the repo as it is on 2026-10-02; the source is noted
-# where it is not obvious. "unverified" marks what the repo does not say.
+# Test fixture: a snapshot of ai2rules/.uh/project.yaml (2026-10-02), the real-world
+# manifest the model was derived from. Not the source of truth; ai2rules owns that.
 
 project:
   id: ai2rules

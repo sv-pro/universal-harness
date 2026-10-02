@@ -11,7 +11,7 @@
     "uh": "node src/cli.ts",
     "test": "node --test",
     "typecheck": "tsc",
-    "check": "npm run typecheck && npm test && node src/cli.ts validate -p ai2rules -q && node src/cli.ts validate -p universal-harness -q && node src/cli.ts provision -p universal-harness --check"
+    "check": "npm run typecheck && npm test && node src/cli.ts validate -q && node src/cli.ts validate -p test/fixtures/ai2rules.project.yaml --no-paths -q && node src/cli.ts provision --check"
   },
   "dependencies": {
     "yaml": "^2.9.1",

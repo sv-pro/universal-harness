@@ -6,7 +6,7 @@ project:
   summary: >-
     One workspace model per project (resources, knowledge, flows, roles, continuity),
     validated against the user's agents and projected into each agent's setup.
-  repo: { path: ~/workspace/universal-harness, resource: code }
+  repo: { resource: code }
 
 resources:
   - id: code

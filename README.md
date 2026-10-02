@@ -10,7 +10,8 @@ This repo holds that model and a small tool around it.
 
 - `docs/model.md`: the categories, each derived from a real project (`ai2rules`).
 - `registry/agents.yaml`: your agents, defined once.
-- `projects/<id>/project.yaml`: one manifest per project.
+- `<repo>/.uh/project.yaml`: each project's manifest, kept in the project's own repo
+  (this repo's is in `.uh/`). `registry/projects.yaml` lists the repos on this machine.
 
 ```bash
 npm install
@@ -18,7 +19,7 @@ npm link                       # optional: puts `uh` on PATH (Node >= 24 runs th
 ```
 
 Inside a described repo, `uh` finds the project by the current directory; elsewhere,
-pass `-p <id>` (a directory under `projects/`) or a manifest path.
+pass `-p <id>` (listed in `registry/projects.yaml`), a repo directory, or a manifest path.
 
 ```bash
 uh validate -p ai2rules                    # gaps: reach, bindings, continuity

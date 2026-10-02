@@ -226,7 +226,8 @@ export const Project = z.strictObject({
   project: z.strictObject({
     id: Id,
     summary: z.string(),
-    repo: z.strictObject({ path: z.string(), resource: Id.optional() }),
+    // path: defaults to the repo holding the manifest (<repo>/.uh/project.yaml); may start with ~/
+    repo: z.strictObject({ path: z.string().default(""), resource: Id.optional() }),
   }),
   resources: z.array(Resource).default([]),
   knowledge: z.array(Knowledge).default([]),
@@ -239,3 +240,9 @@ export const Project = z.strictObject({
   policy: z.array(PolicyRef).default([]),
 });
 export type Project = z.infer<typeof Project>;
+
+// Per-user index of described repos, so `-p <id>` works from anywhere.
+export const ProjectIndex = z.strictObject({
+  projects: z.array(z.strictObject({ id: Id, path: z.string() })).default([]),
+});
+export type ProjectIndex = z.infer<typeof ProjectIndex>;

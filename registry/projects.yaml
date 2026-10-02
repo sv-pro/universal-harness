@@ -1,0 +1,5 @@
+# Repos described by universal-harness on this machine, so `uh -p <id>` works from
+# anywhere. Each repo holds its own manifest at .uh/project.yaml.
+projects:
+  - { id: ai2rules, path: ~/workspace/ai2rules }
+  - { id: universal-harness, path: ~/workspace/universal-harness }

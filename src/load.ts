@@ -1,9 +1,9 @@
 import { readFileSync } from "node:fs";
 import { homedir } from "node:os";
-import { join } from "node:path";
+import { basename, dirname, join, resolve } from "node:path";
 import { parse } from "yaml";
 import type { z } from "zod";
-import { AgentRegistry, Project } from "./schema.ts";
+import { AgentRegistry, Project, ProjectIndex } from "./schema.ts";
 
 export class LoadError extends Error {}
 
@@ -19,11 +19,24 @@ function load<S extends z.ZodType>(schema: S, file: string): z.infer<S> {
   return result.data;
 }
 
-/** Repo paths may start with `~/`: a manifest is shared, a home directory is not. */
+export const MANIFEST = join(".uh", "project.yaml");
+
+/** A manifest lives in its project's repo (<repo>/.uh/project.yaml), which is then the
+ *  repo path. Elsewhere (a test fixture) it must say `repo.path`, which may start with ~/. */
 export function loadProject(file: string): Project {
   const p = load(Project, file);
-  const path = p.project.repo.path;
-  if (path === "~" || path.startsWith("~/") || path.startsWith("~\\")) p.project.repo.path = join(homedir(), path.slice(1));
+  p.project.repo.path = expandHome(p.project.repo.path) || repoOf(file) || "";
+  if (!p.project.repo.path) throw new LoadError(`${file}: not in <repo>/.uh/, so project.repo.path is required`);
   return p;
 }
+
+const repoOf = (file: string) => {
+  const dir = dirname(resolve(file));
+  return basename(dir) === ".uh" ? dirname(dir) : undefined;
+};
+
+export const expandHome = (path: string) =>
+  path === "~" || path.startsWith("~/") || path.startsWith("~\\") ? join(homedir(), path.slice(1)) : path;
+
+export const loadProjectIndex = (file: string): ProjectIndex => load(ProjectIndex, file);
 export const loadAgents = (file: string): AgentRegistry => load(AgentRegistry, file);
