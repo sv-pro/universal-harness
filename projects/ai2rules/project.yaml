@@ -288,7 +288,7 @@ roles:
     inbox: [flywheel.advocacy, post.draft]
     writes: [docs/**, blog/**, _tasks/3_advocacy/**]
     uses: [code]
-    # Rebound 2026-10-02 (maintainer): Antigravity is rarely used; docs/FLYWHEEL.md still names it.
+    # Rebound 2026-10-02 (maintainer): Antigravity is rarely used. docs/FLYWHEEL.md updated in PR #96.
     agents: [claude-code, codex, antigravity]
   - id: illustrator
     summary: Generate hero images in the house style (see _tasks/3_advocacy/hero-illustrations.md)

@@ -11,7 +11,7 @@ Updated 2026-10-02 by Claude Code (desktop). Keep this current as you work.
   `npm run check` green (22 tests).
 - `uh` is on PATH on the Windows host (`npm link`); it finds the project by cwd.
 - ai2rules: megaphone rebound to Claude Code → Codex → Antigravity (docs/FLYWHEEL.md
-  still names Antigravity). Provisioning PR https://github.com/sv-pro/ai2rules/pull/96
+  updated in the same PR). Provisioning PR https://github.com/sv-pro/ai2rules/pull/96
   updated with the rebind. ai2rules' checkout is back on
   `fix/projection-effective-call-log-chain`, its untracked HANDOFF.md untouched.
 - Linear: URL checked against docs (Codex), no live connection yet. `validate`
@@ -19,7 +19,7 @@ Updated 2026-10-02 by Claude Code (desktop). Keep this current as you work.
 
 ## Open questions for the maintainer
 
-1. Review and merge sv-pro/ai2rules#96; update docs/FLYWHEEL.md for the megaphone rebind?
+1. Review and merge sv-pro/ai2rules#96 (provisioning, megaphone rebind, FLYWHEEL.md).
 2. After connecting Claude Code to Linear (docs/claude-code-linear.md): read AI2's
    workflow statuses so the `flywheel` and `change` flows can be mapped.
 
