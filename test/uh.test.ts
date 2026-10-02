@@ -98,6 +98,12 @@ test("brief projected for an agent shows its roles and reach gaps", () => {
   assert.match(grok, /cannot see local, uncommitted files/);
 });
 
+test("a ~/ repo path is expanded per machine", async () => {
+  const { homedir } = await import("node:os");
+  const p = loadProject("projects/ai2rules/project.yaml");
+  assert.ok(p.project.repo.path.startsWith(homedir()), p.project.repo.path);
+});
+
 test("unknown keys are rejected (YAML flow maps split unquoted commas into keys)", () => {
   const r = Project.safeParse({
     project: { id: "p", summary: "s", repo: { path: "." } },

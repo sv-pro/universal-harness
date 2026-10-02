@@ -1,19 +1,21 @@
 # The harness described in its own model: a minimal project (no tracker, no
-# deploy target, no remote yet), to check that the model does not assume ai2rules.
+# deploy target), to check that the model does not assume ai2rules.
 
 project:
   id: universal-harness
   summary: >-
     One workspace model per project (resources, knowledge, flows, roles, continuity),
     validated against the user's agents and projected into each agent's setup.
-  repo: { path: 'C:\Users\imser\workspace\universal-harness', resource: code }
+  repo: { path: ~/workspace/universal-harness, resource: code }
 
 resources:
   - id: code
     kind: code-host
-    provider: local-git
-    locator: 'C:\Users\imser\workspace\universal-harness (no remote yet)'
-    access: [{ via: cli, tool: git }]
+    provider: github
+    locator: sv-pro/universal-harness
+    access:
+      - { via: cli, tool: gh }
+      - { via: cli, tool: git }
   - id: gdocs
     kind: document-store
     provider: google-drive
@@ -72,7 +74,7 @@ identity:
 continuity:
   records:
     - level: session
-      location: HANDOFF.md, committed on the working branch
+      location: HANDOFF.md, committed and pushed on the working branch
       path: HANDOFF.md
       cadence: after every meaningful step
-      reachable_by: [local]
+      reachable_by: [local, cloud]

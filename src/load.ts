@@ -1,4 +1,6 @@
 import { readFileSync } from "node:fs";
+import { homedir } from "node:os";
+import { join } from "node:path";
 import { parse } from "yaml";
 import type { z } from "zod";
 import { AgentRegistry, Project } from "./schema.ts";
@@ -17,5 +19,11 @@ function load<S extends z.ZodType>(schema: S, file: string): z.infer<S> {
   return result.data;
 }
 
-export const loadProject = (file: string): Project => load(Project, file);
+/** Repo paths may start with `~/`: a manifest is shared, a home directory is not. */
+export function loadProject(file: string): Project {
+  const p = load(Project, file);
+  const path = p.project.repo.path;
+  if (path === "~" || path.startsWith("~/") || path.startsWith("~\\")) p.project.repo.path = join(homedir(), path.slice(1));
+  return p;
+}
 export const loadAgents = (file: string): AgentRegistry => load(AgentRegistry, file);

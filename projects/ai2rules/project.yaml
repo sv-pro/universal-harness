@@ -7,7 +7,7 @@ project:
   summary: >-
     Deterministic governance kernel for CLI coding agents (Rust, published to npm as
     `ai2rules-harness`), plus the ai2rules.dev blog (Astro, in `blog/`).
-  repo: { path: 'C:\Users\imser\workspace\ai2rules', resource: code }
+  repo: { path: ~/workspace/ai2rules, resource: code }
 
 # ---------------------------------------------------------------- §1 resources
 resources:
@@ -288,7 +288,8 @@ roles:
     inbox: [flywheel.advocacy, post.draft]
     writes: [docs/**, blog/**, _tasks/3_advocacy/**]
     uses: [code]
-    agents: [antigravity, claude-code, codex]
+    # Rebound 2026-10-02 (maintainer): Antigravity is rarely used; docs/FLYWHEEL.md still names it.
+    agents: [claude-code, codex, antigravity]
   - id: illustrator
     summary: Generate hero images in the house style (see _tasks/3_advocacy/hero-illustrations.md)
     writes: [blog/src/assets/**]
