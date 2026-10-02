@@ -103,6 +103,10 @@ What reading real data showed (`uh pickup`):
   so `branch_prefixes` in the registry tells who worked on an item last.
 - **Carrier values need the provider's full vocabulary.** An open *draft* PR is work in
   progress, not review; the PR reader reports `draft` as its own value.
+- **One state, several values.** AI2's Linear workflow (read by Codex) has Backlog *and*
+  Todo for "open", and Canceled *and* Duplicate for a change that ends without merged
+  work, so a state maps a carrier to one value or a list, and the change flow gained a
+  `canceled` end state: otherwise a canceled issue would read as done.
 
 ## 4. Role: a responsibility that some agent fills
 
