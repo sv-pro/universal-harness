@@ -57,7 +57,11 @@ export async function pickup(project: Project, registry: AgentRegistry, base: Pi
       const atBranch = readAtBranch(ctx, path, keys.branch);
       if (atBranch !== undefined) return atBranch ?? undefined;
       const full = join(repo, path);
-      return existsSync(full) ? { text: readFileSync(full, "utf8"), from: `${path} (working tree)` } : undefined;
+      if (!existsSync(full)) return undefined;
+      // An untracked file survives branch switches, so it may belong to another branch's work.
+      const tracked = ctx.exec("git", ["ls-files", "--error-unmatch", "--", path]).ok;
+      const from = `${path} (working tree${tracked ? "" : ", untracked: not tied to this branch, check that it is about this item"})`;
+      return { text: readFileSync(full, "utf8"), from };
     },
   };
 

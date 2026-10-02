@@ -147,6 +147,7 @@ test("a session record is never read from another branch's working tree", async 
 
   const checkedOut = await pickup(p, registry, { exec, fetch: noFetch, env: {} }, { ref: "main", fetch: false });
   assert.match(checkedOut.records[0]!.found[0]!.text, /someone else's handoff/);
+  assert.match(checkedOut.records[0]!.found[0]!.from, /untracked: not tied to this branch/);
 });
 
 test("a fresh branch (tip == main) is open, not merged", async () => {

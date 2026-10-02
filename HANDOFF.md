@@ -4,30 +4,25 @@ Updated 2026-10-02 by Claude Code (desktop). Keep this current as you work.
 
 ## State
 
-- 2026-10-02, Codex: added `docs/claude-code-linear.md`, explaining Claude Code
-  MCP OAuth setup, verification, and the separate `LINEAR_API_KEY` route for
-  pickup. Checked official setup docs and local provider code; live access remains
-  unverified. No credentials, registry declarations or agent config changed.
-
-- `main`: model, registry, manifests, `uh validate`, `uh brief`, `uh pickup`.
-- `claude/provision` (this branch): `uh provision` (owned blocks in AGENTS.md and
-  CLAUDE.md, `.uh/brief.md`, `.mcp.json`, manual steps for user-level config),
-  connection catalog in `registry/agents.yaml`, project lookup by cwd/id, `bin: uh`.
-  `npm run check` green (21 tests, includes `provision --check` on this repo).
-- This repo is provisioned (`--write` done here). **ai2rules is not**: dry run only,
-  waiting for the maintainer's go-ahead (it writes AGENTS.md, CLAUDE.md, .uh/brief.md,
-  .mcp.json in that repo).
-- Unverified: the Linear and GitHub MCP URLs in the catalog; Codex's 32 KiB limit;
-  Linear API reading in pickup.
+- `main` (fb3eafb): model, registry, manifests, `uh validate|brief|pickup|provision`,
+  Codex's `docs/claude-code-linear.md`, connection `evidence` (none/docs/live).
+- `claude/untracked-records` (this branch, not merged): pickup labels a working-tree
+  record that git does not track ("not tied to this branch"). Found when an
+  uncommitted ai2rules HANDOFF.md followed a branch switch. `npm run check` green.
+- **ai2rules provisioned** on its branch `claude/uh-workspace` (23ef35e, from
+  origin/main, not pushed): AGENTS.md block + layout + per-assistant note, CLAUDE.md
+  block, `.uh/brief.md`, `.mcp.json` (Linear). ai2rules' checkout was switched back
+  to `fix/projection-effective-call-log-chain`, its untracked HANDOFF.md untouched.
+- Linear: URL checked against docs (Codex), no live connection yet. `validate`
+  counts `.mcp.json` as reach; that is configuration, not evidence of access.
 
 ## Open questions for the maintainer
 
-1. Provision ai2rules (`uh provision --write` inside it), and commit there?
-2. How do agents reach Linear today? (Provisioning adds Linear MCP to `.mcp.json` for
-   Claude Code; Codex and Grok Bot get manual steps.)
-3. Linear status names for the `flywheel` and `change` flows.
-4. Antigravity is first choice for megaphone/illustrator but used rarely: rebind?
-5. Is ai2rules' `HANDOFF.md` meant to stay uncommitted? Cloud agents never see it.
+1. Push `claude/uh-workspace` in ai2rules and open a PR?
+2. After connecting Claude Code to Linear (docs/claude-code-linear.md): read AI2's
+   workflow statuses so the `flywheel` and `change` flows can be mapped.
+3. `npm link` here, so the `uh pickup` the AGENTS.md block mentions exists on PATH?
+4. Antigravity is first choice for megaphone/illustrator but rarely used: rebind?
 
 ## Next
 
