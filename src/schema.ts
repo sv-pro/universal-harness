@@ -145,7 +145,8 @@ export const Flow = z.strictObject({
         id: Id,
         summary: z.string().optional(),
         terminal: z.boolean().default(false),
-        values: z.record(z.string(), z.string()).default({}), // carrier id -> value
+        // carrier id -> the value(s) meaning this state there (Linear's Backlog and Todo are both "open")
+        values: z.record(z.string(), z.union([z.string(), z.array(z.string()).min(1)])).default({}),
       }),
     )
     .min(2),

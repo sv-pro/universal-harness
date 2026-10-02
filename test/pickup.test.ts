@@ -181,3 +181,18 @@ test("a fresh branch (tip == main) is open, not merged", async () => {
   assert.deepEqual(await state("m"), ["wip"]);
   assert.deepEqual(await state("older"), ["done"]);
 });
+
+test("a state can have several values in one carrier (Linear: Backlog and Todo are both open)", async () => {
+  const p = project(".");
+  p.flows[0]!.states[0]!.values["linear-status"] = ["backlog", "todo"];
+  const { exec } = scripted([
+    ["git branch --show-current", "main\n"],
+    ["gh pr view 95", PR95],
+    ["gh issue view 87", { state: "OPEN", title: "Fixtures", url: "u87" }],
+  ]);
+  const fetch = (async () => new Response(JSON.stringify({ data: { issue: { title: "t", url: "l", state: { name: "Backlog" } } } }))) as unknown as typeof globalThis.fetch;
+  const r = await pickup(p, registry, { exec, fetch, env: { LINEAR_API_KEY: "k" } }, { ref: "#95", fetch: false });
+  const change = r.flows.find((f) => f.flow === "change")!;
+  assert.deepEqual(change.states, ["open"]);
+  assert.equal(change.basis, "primary");
+});

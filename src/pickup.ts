@@ -70,7 +70,7 @@ export async function pickup(project: Project, registry: AgentRegistry, base: Pi
     repo,
     project,
     registry,
-    valuesOf: (id) => [...new Set(project.flows.flatMap((f) => f.states.map((s) => s.values[id]).filter((v): v is string => !!v)))],
+    valuesOf: (id) => [...new Set(project.flows.flatMap((f) => f.states.flatMap((s) => asList(s.values[id]))))],
     readFile: (path, keys, branchOnly = false) => {
       if (branchOnly && !keys.branch) return undefined; // never attribute another branch's file to this item
       const atBranch = readAtBranch(ctx, path, keys.branch);
@@ -231,7 +231,9 @@ export async function pickup(project: Project, registry: AgentRegistry, base: Pi
   };
 }
 
-const same = (a: string | undefined, b: string) => a !== undefined && a.replaceAll("\\", "/").toLowerCase() === b.replaceAll("\\", "/").toLowerCase();
+const norm = (s: string) => s.replaceAll("\\", "/").toLowerCase();
+const asList = (v: string | string[] | undefined) => (v === undefined ? [] : Array.isArray(v) ? v : [v]);
+const same = (a: string | string[] | undefined, b: string) => asList(a).some((x) => norm(x) === norm(b));
 
 function intersect(sets: string[][]): string[] {
   const nonEmpty = sets.filter((s) => s.length);
