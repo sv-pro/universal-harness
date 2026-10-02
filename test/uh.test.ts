@@ -124,3 +124,26 @@ test("locate: a repo directory, a known id, or the repo above the current direct
   assert.equal(resolve(locate("universal-harness", "/").project.project.repo.path), here);
   assert.throws(() => locate("no-such-project", "/"), /no project 'no-such-project'/);
 });
+
+test("locate: a checkout without the manifest reads it from the default branch", async () => {
+  const { execFileSync } = await import("node:child_process");
+  const { mkdtempSync, mkdirSync, writeFileSync } = await import("node:fs");
+  const { tmpdir } = await import("node:os");
+  const { join } = await import("node:path");
+  const { locate } = await import("../src/locate.ts");
+  const repo = mkdtempSync(join(tmpdir(), "uh-locate-"));
+  const git = (...a: string[]) => execFileSync("git", ["-C", repo, "-c", "user.name=t", "-c", "user.email=t@t", ...a], { stdio: "ignore" });
+  git("init", "-q", "-b", "main");
+  git("commit", "-q", "--allow-empty", "-m", "base");
+  git("switch", "-q", "-c", "old-feature");
+  git("switch", "-q", "main");
+  mkdirSync(join(repo, ".uh"));
+  writeFileSync(join(repo, ".uh", "project.yaml"), "project: { id: demo, summary: s, repo: {} }\n");
+  git("add", ".");
+  git("commit", "-q", "-m", "manifest");
+  git("switch", "-q", "old-feature");
+  const found = locate(undefined, repo);
+  assert.equal(found.project.project.id, "demo");
+  assert.equal(found.file, "main:.uh/project.yaml");
+  assert.equal(resolve(found.project.project.repo.path), resolve(repo));
+});

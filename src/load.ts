@@ -7,8 +7,8 @@ import { AgentRegistry, Project, ProjectIndex } from "./schema.ts";
 
 export class LoadError extends Error {}
 
-function load<S extends z.ZodType>(schema: S, file: string): z.infer<S> {
-  const raw: unknown = parse(readFileSync(file, "utf8"));
+function load<S extends z.ZodType>(schema: S, file: string, text = readFileSync(file, "utf8")): z.infer<S> {
+  const raw: unknown = parse(text);
   const result = schema.safeParse(raw);
   if (!result.success) {
     const issues = result.error.issues
@@ -27,6 +27,13 @@ export function loadProject(file: string): Project {
   const p = load(Project, file);
   p.project.repo.path = expandHome(p.project.repo.path) || repoOf(file) || "";
   if (!p.project.repo.path) throw new LoadError(`${file}: not in <repo>/.uh/, so project.repo.path is required`);
+  return p;
+}
+
+/** A manifest read from somewhere other than its file (e.g. `git show main:.uh/project.yaml`). */
+export function loadProjectText(text: string, source: string, repoPath: string): Project {
+  const p = load(Project, source, text);
+  p.project.repo.path = expandHome(p.project.repo.path) || repoPath;
   return p;
 }
 
