@@ -14,6 +14,7 @@ agents:
       via: "CLAUDE.md imports @AGENTS.md"
     extensions: [hooks, subagents, commands, skills, plugins, mcp]
     mcp_config: ".mcp.json (project), ~/.claude.json (user), claude.ai connectors (account)"
+    branch_prefixes: [claude]
     connections:
       mcp: [google-drive, gmail, notion]   # claude.ai connectors seen in a desktop session
       cli: [git, gh, npm]
@@ -30,6 +31,7 @@ agents:
       entry: AGENTS.md
     extensions: [skills, rules, plugins, automations, mcp]
     mcp_config: "~/.codex/config.toml [mcp_servers]"
+    branch_prefixes: [codex]
     connections:
       mcp: [node_repl]
       cli: [git, gh, npm]
@@ -47,6 +49,7 @@ agents:
       via: "unverified: Cursor-based, expected to read AGENTS.md"
     extensions: [routines, mcp]
     mcp_config: "~/.grokbot/settings.json mcpBoxServers"
+    branch_prefixes: [cursor]   # PR #95 head: cursor/doctor-fixtures-87-15e5
     connections:
       mcp: []
       cli: []

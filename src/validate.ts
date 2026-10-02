@@ -2,7 +2,7 @@
 // Schema shape is checked at load time; this is about the parts fitting together.
 import { existsSync } from "node:fs";
 import { join } from "node:path";
-import type { Access, Agent, AgentRegistry, Project, Resource } from "./schema.ts";
+import { BUILTIN_KEYS, type Access, type Agent, type AgentRegistry, type Project, type Resource } from "./schema.ts";
 
 export type Finding = { level: "error" | "warn" | "info"; where: string; message: string };
 
@@ -46,9 +46,23 @@ export function validate(p: Project, reg: AgentRegistry, opts: ValidateOptions =
     }
   }
 
+  // identity
+  for (const k of p.identity.keys) {
+    try {
+      new RegExp(k.pattern);
+    } catch (e) {
+      err(`identity.${k.id}`, `bad pattern: ${(e as Error).message}`);
+    }
+    if ((BUILTIN_KEYS as readonly string[]).includes(k.id)) err(`identity.${k.id}`, "reserved key id");
+  }
+  const keyIds = new Set<string>([...BUILTIN_KEYS, ...p.identity.keys.map((k) => k.id)]);
+
   // carriers
   for (const c of p.carriers) {
     if (c.resource && !resources.has(c.resource)) err(`carriers.${c.id}`, `unknown resource '${c.resource}'`);
+    if (c.key && !keyIds.has(c.key)) err(`carriers.${c.id}`, `unknown identity key '${c.key}'`);
+    if (!c.key) info(`carriers.${c.id}`, "no identity key: pickup cannot find an item here");
+    if (c.kind === "frontmatter" && (!c.paths.length || !c.field)) err(`carriers.${c.id}`, "frontmatter carrier needs paths and field");
   }
 
   // flows

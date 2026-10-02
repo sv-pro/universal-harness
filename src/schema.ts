@@ -19,6 +19,8 @@ export const Agent = z.strictObject({
   }),
   extensions: z.array(z.string()).default([]),
   mcp_config: z.string().optional(),
+  // Branch prefixes this agent pushes under, e.g. Grok Bot pushes `cursor/...`.
+  branch_prefixes: z.array(z.string()).default([]),
   // What this agent can reach today, as declared by the user (not detected yet).
   connections: z
     .object({
@@ -95,6 +97,9 @@ export const Carrier = z.strictObject({
   kind: z.string(), // folder, status, issue-state, pr-state, branch, checkbox, section
   locator: z.string(),
   resource: Id.optional(),
+  key: z.string().optional(), // identity key that finds the item here: an identity key id, "branch" or "slug"
+  paths: z.array(z.string()).default([]), // file carriers: repo-relative templates with {slug}
+  field: z.string().optional(), // frontmatter carriers: the field holding the state
 });
 export type Carrier = z.infer<typeof Carrier>;
 
@@ -150,16 +155,36 @@ export const Role = z.strictObject({
 });
 export type Role = z.infer<typeof Role>;
 
+// ------------------------------------------------------------- identity (§3)
+
+// Built-in keys every project has: "branch" and "slug" (the branch name without its prefix).
+export const BUILTIN_KEYS = ["branch", "slug", "pr"] as const;
+
+export const Identity = z.strictObject({
+  keys: z
+    .array(
+      z.strictObject({
+        id: Id,
+        pattern: z.string(), // regex finding the key in any text (titles, commit subjects, branch names)
+        note: z.string().optional(),
+      }),
+    )
+    .default([]),
+  mention: z.string().optional(), // how items are cited in titles and commits, e.g. "[{linear} / {github}]"
+  branch: z.string().optional(), // naming convention, documentation only
+  examples: z.array(z.string()).default([]),
+});
+export type Identity = z.infer<typeof Identity>;
+
 // ----------------------------------------------------------- continuity (§8)
 
 export const Continuity = z.strictObject({
-  id_scheme: z.strictObject({ pattern: z.string(), example: z.string().optional() }).optional(),
-  branch: z.strictObject({ pattern: z.string(), example: z.string().optional() }).optional(),
   records: z
     .array(
       z.strictObject({
         level: z.enum(["session", "item", "project"]),
         location: z.string(),
+        path: z.string().optional(), // file record: repo-relative, may use {slug}; read from the item's branch
         cadence: z.string(),
         reachable_by: z.array(z.enum(["local", "cloud"])).min(1),
       }),
@@ -186,6 +211,7 @@ export const Project = z.strictObject({
   carriers: z.array(Carrier).default([]),
   flows: z.array(Flow).default([]),
   roles: z.array(Role).default([]),
+  identity: Identity.default({ keys: [], examples: [] }),
   continuity: Continuity.default({ records: [] }),
   policy: z.array(PolicyRef).default([]),
 });

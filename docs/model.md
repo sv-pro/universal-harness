@@ -89,9 +89,19 @@ a PLAN checkbox. Each flow declares its carriers: one **primary** (the truth) an
 **mirrors** with a sync mode (`manual` everywhere in ai2rules today). Most "what's the
 status of X?" explanations exist because the carriers disagree.
 
-**Identity.** An item has one identity across carriers: `[AI2-25 / #86]` in commit
-messages, `codex/ai2-10-…` in branch names. Category: an **id scheme** with
-cross-references per carrier.
+**Identity.** An item has one identity across carriers, made of **keys**, each a
+pattern that finds it in any text: `[AI2-25 / #87]` in a PR title yields
+`linear=AI2-25` and `github=#87`; `codex/ai2-10-…` yields `linear=AI2-10`. Each carrier
+declares the key that locates an item in it (Linear by `linear`, issues by `github`,
+PRs by `branch`, the `_tasks` folder by `slug`). `branch`, `slug` and `pr` are built in.
+What reading real data showed (`uh pickup`):
+- **Keys are not 1:1.** `AI2-25` is a parent spanning PRs #92–#95; `#87` is one child.
+  A ref can name several items, so pickup lists candidates instead of guessing.
+- **GitHub numbers are shared** between issues and PRs: `#95` is a PR whose issue is `#87`.
+- **The branch prefix names the agent.** Grok Bot pushes `cursor/<slug>-<n>-<hash>`,
+  so `branch_prefixes` in the registry tells who worked on an item last.
+- **Carrier values need the provider's full vocabulary.** An open *draft* PR is work in
+  progress, not review; the PR reader reports `draft` as its own value.
 
 ## 4. Role: a responsibility that some agent fills
 
@@ -159,6 +169,11 @@ hooks) are knowledge attached to the agent, not to the project.
 | Branch naming `<agent>/<issue>-<slug>` | item identity + who had it last |
 | Tracker comments / status | item, visible to cloud agents |
 
+Found by `uh pickup` on Grok Bot's PR #95: its **PR description** is a rich item record
+(summary, test matrix, known divergences), written for every push. But Grok Bot's own
+"Run failed" status exists only inside Grok Bot: GitHub shows 14/14 checks green. A
+record no other agent can reach is, for continuity, no record.
+
 **Category.** A **continuity record** at three levels (session, item, project) with a
 **location reachable by every agent that may take over**. A cloud agent (Grok Bot,
 Codex cloud) cannot see an uncommitted local file, so the record lives on the pushed
@@ -176,8 +191,12 @@ from §2 with a time trigger.
    reachable by that agent; every flow transition names a role and its checks exist.
 2. **Brief**: render the manifest into the agent-facing instructions block
    (resources, flows, roles, procedures, continuity rules), included from `AGENTS.md`.
-3. **Pick up** (next): given an item or branch, assemble its state from all carriers
-   and the latest continuity record.
+3. **Pick up**: given a ref (key, PR, branch, slug, or nothing = the checked-out
+   branch), resolve the item's keys, read every carrier that can locate it, infer the
+   flow state (primary first, mirrors as fallback, disagreements reported), list the
+   next transitions with their gates, and attach the branch, PR, checks and continuity
+   records. Read-only. Provider code (git, GitHub via `gh`, Linear via its API, files)
+   lives in `src/providers/`; the core knows only carriers, flows and keys.
 4. **Provision** (later): write each agent's native config (MCP servers, skills,
    hooks) from the manifest.
 

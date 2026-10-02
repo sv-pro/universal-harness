@@ -41,7 +41,7 @@ procedures:
     defined_in: AGENTS.md
 
 carriers:
-  - { id: branch, kind: branch, locator: git branch, resource: code }
+  - { id: branch, kind: branch, locator: git branch, resource: code, key: branch }
 
 flows:
   - id: change
@@ -49,8 +49,8 @@ flows:
     items: [change]
     carriers: { primary: branch }
     states:
-      - { id: in-progress, values: { branch: "a topic branch" } }
-      - { id: done, terminal: true, values: { branch: merged into main } }
+      - { id: in-progress, summary: a topic branch, values: { branch: open } }
+      - { id: done, terminal: true, summary: merged into main, values: { branch: merged } }
     transitions:
       - { from: in-progress, to: done, by: maintainer, checks: [check, instance-first] }
 
@@ -65,10 +65,13 @@ roles:
     uses: [code]
     agents: [claude-code, codex]
 
+identity:
+  branch: "{agent}/{slug}"
+
 continuity:
-  branch: { pattern: "<agent>/<slug>" }
   records:
     - level: session
       location: HANDOFF.md, committed on the working branch
+      path: HANDOFF.md
       cadence: after every meaningful step
       reachable_by: [local]

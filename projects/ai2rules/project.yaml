@@ -174,15 +174,20 @@ procedures:
 
 # ------------------------------------------------------------ §3 carriers
 carriers:
-  - { id: tasks-folder, kind: folder, locator: "_tasks/<phase>/<item>.md" }
-  - { id: linear-status, kind: status, locator: Linear issue status, resource: linear }
-  - { id: gh-issue, kind: issue-state, locator: GitHub issue state, resource: gh-issues }
-  - { id: gh-pr, kind: pr-state, locator: GitHub PR state, resource: gh-issues }
+  - { id: tasks-folder, kind: folder, locator: "_tasks/<phase>/<slug>.md", key: slug }
+  - { id: linear-status, kind: status, locator: Linear issue status, resource: linear, key: linear }
+  - { id: gh-issue, kind: issue-state, locator: GitHub issue state, resource: gh-issues, key: github }
+  - { id: gh-pr, kind: pr-state, locator: GitHub PR state, resource: gh-issues, key: branch }
   - { id: plan-checkbox, kind: checkbox, locator: PLAN.md epic checkboxes }
   - { id: changelog, kind: section, locator: "CHANGELOG.md (Unreleased → version)" }
   - { id: git-tag, kind: tag, locator: "git tag v*", resource: code }
   - { id: npm-version, kind: version, locator: published npm version, resource: npm }
-  - { id: post-file, kind: frontmatter, locator: "blog/src/content/blog/<slug>.md draft: true|false" }
+  - id: post-file
+    kind: frontmatter
+    locator: "blog/src/content/blog/<slug>.md, field draft"
+    key: slug
+    paths: ["blog/src/content/blog/{slug}.md", "blog/src/content/blog/{slug}.mdx"]
+    field: draft
 
 # --------------------------------------------------------------- §3 flows
 flows:
@@ -214,13 +219,13 @@ flows:
       mirrors: [{ carrier: gh-issue, sync: manual }, { carrier: gh-pr, sync: auto }, { carrier: plan-checkbox, sync: manual }]
     states:
       - { id: open, values: { gh-issue: open } }
-      - { id: in-progress, summary: a branch exists, values: { gh-issue: open } }
+      - { id: in-progress, summary: "a branch exists, maybe a draft PR", values: { gh-issue: open, gh-pr: draft } }
       - { id: in-review, values: { gh-issue: open, gh-pr: open } }
       - { id: merged, values: { gh-pr: merged } }
       - { id: closed, terminal: true, values: { gh-issue: closed, gh-pr: merged } }
     transitions:
       - { from: open, to: in-progress, by: engine, effects: ["branch <agent>/<key>-<slug>"] }
-      - { from: in-progress, to: in-review, by: engine, checks: [rust-checks, readme-sync, wasm-refresh, governance-bench, demos-check, decision-record], effects: ["PR titled [AI2-<n> / #<n>] …"] }
+      - { from: in-progress, to: in-review, by: engine, checks: [rust-checks, readme-sync, wasm-refresh, governance-bench, demos-check, decision-record], effects: ["PR titled [AI2-<n> / #<n>] …, marked ready for review"] }
       - { from: in-review, to: in-progress, by: maintainer, effects: [review comments] }
       - { from: in-review, to: merged, by: maintainer, checks: [rust-checks] }
       - { from: merged, to: closed, by: engine, checks: [trackers-sync], effects: [close in GitHub and Linear, tick PLAN checkbox] }
@@ -249,10 +254,10 @@ flows:
     carriers:
       primary: post-file
     states:
-      - { id: draft, values: { post-file: "draft: true" } }
+      - { id: draft, values: { post-file: "true" } }
       - { id: illustrated, summary: "hero image in blog/src/assets, 1376×768 JPG" }
       - { id: reviewed }
-      - { id: published, values: { post-file: "draft: false, on the production branch" } }
+      - { id: published, summary: "draft: false, on the production branch", values: { post-file: "false" } }
       - { id: seeded, terminal: true, summary: copy in blog/social/<slug>.md posted }
     transitions:
       - { from: draft, to: illustrated, by: illustrator, effects: [hero in house style] }
@@ -301,17 +306,33 @@ roles:
     uses: [ci, npm, gh-releases]
 
 # ----------------------------------------------------------- §8 continuity
+# --------------------------------------------------------------- §3 identity
+identity:
+  keys:
+    - { id: linear, pattern: "AI2-\\d+", note: "Linear issue; often a parent spanning several PRs (AI2-25 → #92–#95)" }
+    - { id: github, pattern: "#\\d+", note: "GitHub issue (a PR number is resolved to key pr)" }
+  mention: "[{linear} / {github}]"
+  branch: "{agent}/{slug}"
+  examples:
+    - "PR title: [AI2-25 / #87] Add deterministic doctor fixtures and read-only behavior proof"
+    - "branches: cursor/doctor-fixtures-87-15e5 (Grok Bot), claude/jira-demo-narrative-uo0wij, codex/ai2-10-authorization-instance, blog/harness-blocked-itself"
+
+# ----------------------------------------------------------- §8 continuity
 continuity:
-  id_scheme: { pattern: "[AI2-<n> / #<n>]", example: "[AI2-25 / #86]" }
-  branch: { pattern: "<agent>/<key>-<slug>", example: codex/ai2-10-authorization-instance }
   records:
     - level: session
       location: HANDOFF.md on the working branch
+      path: HANDOFF.md
       cadence: at the end of a session (today); should be after every meaningful step
       reachable_by: [local]
     - level: item
       location: the item's _tasks file (appended summary)
+      path: "_tasks/*/{slug}.md"
       cadence: on each flywheel transition
+      reachable_by: [local, cloud]
+    - level: item
+      location: PR description and comments
+      cadence: when the PR is opened, and on each push (Grok Bot)
       reachable_by: [local, cloud]
 
 # --------------------------------------------------------------- §6 policy

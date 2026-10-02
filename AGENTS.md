@@ -16,7 +16,11 @@ projects/<id>/project.yaml   one manifest per described project
 src/schema.ts                zod schemas, one block per model section
 src/validate.ts              cross-reference checks (manifest × registry)
 src/brief.ts                 manifest → agent-facing brief (markdown)
-src/cli.ts                   `uh validate|brief`
+src/identity.ts              item keys: extract, seed from a ref, branch → agent
+src/pickup.ts                resolve an item, read its carriers, infer flow state
+src/pickup-render.ts         pickup report → markdown
+src/providers/               the only provider-specific code: git, github (gh), linear (API), files
+src/cli.ts                   `uh validate|brief|pickup`
 test/                        node:test
 ```
 
@@ -27,8 +31,10 @@ test/                        node:test
   and say which. Don't add fields for cases no project has.
 - **Don't invent facts in manifests.** If a project's repo doesn't say it, mark it
   `unverified` or leave it out; the validator reports the gap.
-- **The model is provider-neutral.** `kind` and `provider` are open strings; no code
-  branches on a specific provider or agent id.
+- **The model is provider-neutral.** `kind` and `provider` are open strings; only
+  `src/providers/*` knows a provider, and no code branches on an agent id.
+- **Pickup never guesses.** What cannot be read goes under Gaps; what is ambiguous
+  goes under Related items; a file from another branch is never attributed to the item.
 - TypeScript runs directly on Node ≥ 24 (type stripping): erasable syntax only (no
   enums, no parameter properties), relative imports end in `.ts`.
 

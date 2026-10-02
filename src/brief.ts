@@ -75,8 +75,11 @@ export function brief(p: Project, reg: AgentRegistry, agentId?: string): string 
 
   L.push("## Continuity: so the next agent can pick up", "");
   const c = p.continuity;
-  if (c.id_scheme) L.push(`- Item identity: \`${c.id_scheme.pattern}\`${c.id_scheme.example ? `, e.g. \`${c.id_scheme.example}\`` : ""}.`);
-  if (c.branch) L.push(`- Branch name: \`${c.branch.pattern}\`${c.branch.example ? `, e.g. \`${c.branch.example}\`` : ""}.`);
+  const id = p.identity;
+  if (id.mention) L.push(`- Cite items as \`${id.mention}\` in PR titles and commit subjects.`);
+  for (const k of id.keys) L.push(`- Key \`${k.id}\`: \`${k.pattern}\`${k.note ? `. ${k.note}` : ""}.`);
+  if (id.branch) L.push(`- Branch name: \`${id.branch}\`${agent?.branch_prefixes[0] ? `, yours start with \`${agent.branch_prefixes[0]}/\`` : ""}.`);
+  for (const e of id.examples) L.push(`- e.g. ${e}`);
   for (const r of c.records) {
     L.push(`- ${cap(r.level)} record: ${r.location}. Update it ${r.cadence}. Readable by ${r.reachable_by.join(" and ")} agents.`);
   }

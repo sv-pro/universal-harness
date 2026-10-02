@@ -17,7 +17,14 @@ npm install
 node src/cli.ts validate projects/ai2rules/project.yaml        # gaps: reach, bindings, continuity
 node src/cli.ts brief projects/ai2rules/project.yaml           # the agent-facing brief
 node src/cli.ts brief projects/ai2rules/project.yaml --agent grok-bot
+node src/cli.ts pickup projects/ai2rules/project.yaml "#95" --agent claude-code   # continue Grok Bot's PR
+node src/cli.ts pickup projects/ai2rules/project.yaml AI2-25                      # parent key: lists its PRs
+node src/cli.ts pickup projects/universal-harness/project.yaml                    # the checked-out branch
 ```
 
-Status: model + validator + brief. Next: `pickup` (assemble an item's state from all
-its carriers), then provisioning each agent's native config.
+`pickup` is read-only (it runs `git fetch` unless `--no-fetch`). It uses your `gh`
+login for GitHub and `LINEAR_API_KEY` for Linear; whatever it cannot read is listed
+under Gaps instead of guessed.
+
+Status: model, `validate`, `brief`, `pickup`. Next: provisioning each agent's native
+config from the manifest.
