@@ -43,7 +43,9 @@ export const Connection = z.strictObject({
   name: z.string(),
   url: z.string().optional(), // remote MCP endpoint (streamable HTTP); absent = no portable config
   auth: z.enum(["oauth", "token", "none"]).default("oauth"),
-  verified: z.boolean().default(false), // url checked against the provider's docs/a working client
+  // How we know the url works: none (from memory), docs (provider's docs checked), live (a client connected).
+  evidence: z.enum(["none", "docs", "live"]).default("none"),
+  evidence_note: z.string().optional(),
   per_agent: z.record(z.string(), z.string()).default({}), // agent id -> how to connect when not by url
   note: z.string().optional(),
 });

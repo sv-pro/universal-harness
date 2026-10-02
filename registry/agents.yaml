@@ -78,18 +78,20 @@ agents:
       - "Print mode (-p) ignores project hooks unless --add-dir <repo> is passed."
 
 # MCP servers by name, as resources refer to them (`access: {via: mcp, tool: <id>}`).
-# `verified: false` = taken from memory of the provider's docs; check before relying on it.
+# `evidence`: none = from memory; docs = the provider's docs checked; live = a client connected.
+# Only `live` justifies adding a connection to an agent's `connections` above.
 connections:
   - id: linear
     name: Linear
     url: https://mcp.linear.app/mcp
     auth: oauth
-    verified: false
+    evidence: docs
+    evidence_note: "Codex, 2026-10-02: linear.app/docs/mcp; /sse is deprecated. See docs/claude-code-linear.md"
   - id: github
     name: GitHub
     url: https://api.githubcopilot.com/mcp/
     auth: oauth
-    verified: false
+    evidence: none
   - id: google-drive
     name: Google Drive
     per_agent:

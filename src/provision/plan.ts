@@ -69,7 +69,10 @@ export function plan(p: Project, reg: AgentRegistry, opts: ProvisionOptions = {}
       f.servers[n.connection.id] = serverEntry(pm.format, n.connection);
       f.agents.add(n.agent.name);
       byFile.set(pm.path, f);
-      if (!n.connection.verified) warnings.push(`${n.connection.name} MCP URL is unverified: ${n.connection.url}`);
+      const ev = n.connection.evidence;
+      if (ev !== "live") {
+        warnings.push(`${n.connection.name} MCP URL ${ev === "docs" ? "checked against the provider's docs, not tested live" : "is unverified"}: ${n.connection.url}`);
+      }
       continue;
     }
     manual.push({ agent: n.agent.name, step: `${n.connection.name} (for ${n.roles.join(", ")}): ${manualStep(n)}` });

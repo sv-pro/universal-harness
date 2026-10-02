@@ -27,6 +27,7 @@ knowledge:
   - { ref: docs/model.md, role: the categories and where each came from, authority: normative, truth_for: [model] }
   - { ref: registry/agents.yaml, role: the user's agents and what they can reach, authority: normative, truth_for: [agents] }
   - { ref: README.md, role: overview and usage, authority: descriptive }
+  - { ref: docs/claude-code-linear.md, role: "runbook: connect Claude Code to Linear (MCP), and pickup's LINEAR_API_KEY", authority: descriptive }
   - { ref: "gdocs:Universal Harness", role: original sketch, authority: descriptive }
   - { ref: HANDOFF.md, role: note from the last session, authority: ephemeral, lifetime: session }
 
