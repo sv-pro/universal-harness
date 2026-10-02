@@ -14,12 +14,14 @@ Updated 2026-10-02 by Claude Code (desktop). Keep this current as you work.
   updated in the same PR). Provisioning PR https://github.com/sv-pro/ai2rules/pull/96
   updated with the rebind. ai2rules' checkout is back on
   `fix/projection-effective-call-log-chain`, its untracked HANDOFF.md untouched.
+- 2026-10-02: ai2rules#96 **merged** (acd6bf7, squash). Trial setup done: ai2rules is
+  on `main`; the fix branch's HANDOFF.md is in `git stash` as `fix-branch-HANDOFF`
+  (restore steps in the trial doc, section 7).
 - Linear: URL checked against docs (Codex), no live connection yet. `validate`
   counts `.mcp.json` as reach; that is configuration, not evidence of access.
 
 ## Open questions for the maintainer
 
-1. Review and merge sv-pro/ai2rules#96 (provisioning, megaphone → Claude Code, critic → Codex first, FLYWHEEL.md).
 2. After connecting Claude Code to Linear (docs/claude-code-linear.md): read AI2's
    workflow statuses so the `flywheel` and `change` flows can be mapped.
 
