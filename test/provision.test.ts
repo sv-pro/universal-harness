@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
-import { mkdtempSync, readFileSync, writeFileSync } from "node:fs";
-import { tmpdir } from "node:os";
+import { readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { test } from "node:test";
+import { tempDir } from "./tmp.ts";
 import { generatedFile, upsertBlock } from "../src/provision/blocks.ts";
 import { mergeMcpJson } from "../src/provision/mcp.ts";
 import { apply, plan } from "../src/provision/plan.ts";
@@ -77,7 +77,7 @@ function project(repo: string) {
 }
 
 test("plan → apply → plan is a no-op, and validate sees the provisioned MCP server", () => {
-  const repo = mkdtempSync(join(tmpdir(), "uh-prov-"));
+  const repo = tempDir("uh-prov-");
   writeFileSync(join(repo, "AGENTS.md"), "# AGENTS.md\n\nHouse rules.\n");
   const p = project(repo);
 
@@ -105,7 +105,7 @@ test("plan → apply → plan is a no-op, and validate sees the provisioned MCP 
 });
 
 test("an entry file beyond an agent's size limit is warned about", () => {
-  const repo = mkdtempSync(join(tmpdir(), "uh-prov-"));
+  const repo = tempDir("uh-prov-");
   writeFileSync(join(repo, "AGENTS.md"), `# AGENTS.md\n\n${"x".repeat(3000)}\n`);
   const w = plan(project(repo), registry).warnings;
   assert.ok(w.some((x) => /AGENTS\.md is \d+ bytes; Codex reads only the first 3000/.test(x)), w.join("\n"));

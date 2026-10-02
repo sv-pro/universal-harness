@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { resolve } from "node:path";
 import { test } from "node:test";
+import { tempDir } from "./tmp.ts";
 import { brief } from "../src/brief.ts";
 import { loadAgents, loadProject } from "../src/load.ts";
 import { AgentRegistry, Project } from "../src/schema.ts";
@@ -127,11 +128,10 @@ test("locate: a repo directory, a known id, or the repo above the current direct
 
 test("locate: a checkout without the manifest reads it from the default branch", async () => {
   const { execFileSync } = await import("node:child_process");
-  const { mkdtempSync, mkdirSync, writeFileSync } = await import("node:fs");
-  const { tmpdir } = await import("node:os");
+  const { mkdirSync, writeFileSync } = await import("node:fs");
   const { join } = await import("node:path");
   const { locate } = await import("../src/locate.ts");
-  const repo = mkdtempSync(join(tmpdir(), "uh-locate-"));
+  const repo = tempDir("uh-locate-");
   const git = (...a: string[]) => execFileSync("git", ["-C", repo, "-c", "user.name=t", "-c", "user.email=t@t", ...a], { stdio: "ignore" });
   git("init", "-q", "-b", "main");
   git("commit", "-q", "--allow-empty", "-m", "base");

@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
-import { mkdtempSync, writeFileSync } from "node:fs";
-import { tmpdir } from "node:os";
+import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { test } from "node:test";
+import { tempDir } from "./tmp.ts";
 import { extractKeys, seedKeys } from "../src/identity.ts";
 import { pickup } from "../src/pickup.ts";
 import { renderPickup } from "../src/pickup-render.ts";
@@ -134,7 +134,7 @@ test("a parent key with several open PRs lists candidates and picks none", async
 });
 
 test("a session record is never read from another branch's working tree", async () => {
-  const repo = mkdtempSync(join(tmpdir(), "uh-"));
+  const repo = tempDir("uh-");
   writeFileSync(join(repo, "HANDOFF.md"), "# someone else's handoff\n");
   const { exec } = scripted([
     ["git branch --show-current", "main\n"],
