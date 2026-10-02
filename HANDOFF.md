@@ -25,6 +25,12 @@ Updated 2026-10-02 by Claude Code (desktop). Keep this current as you work.
 
 ## Next
 
+- **Trial pending (maintainer runs it):** `docs/trials/2026-10-pickup-95.md`, a fresh
+  Claude Code and a fresh Codex pick up Grok Bot's #95; fill in its section 6 and
+  choose the next increment from section 7. Writing it found a conflict in ai2rules:
+  FLYWHEEL.md limits the Engine to crates/src/tests, AGENTS.md makes it update README
+  test counts in the same commit.
+
 - Hooks that enforce the checkpoint obligation (e.g. remind to update HANDOFF.md).
 - Procedures → skills/commands for agents other than Claude Code.
 - A second, different real project to test the model.
