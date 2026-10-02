@@ -22,8 +22,8 @@ Updated 2026-10-02 by Claude Code (desktop). Keep this current as you work.
 
 - 2026-10-02: **manifests moved into their repos** (`.uh/project.yaml`; harness keeps
   `registry/agents.yaml` + `registry/projects.yaml`); uh falls back to the default
-  branch's manifest when a checkout lacks it. ai2rules' manifest is in PR #97: until it
-  merges, `uh` finds no manifest in ai2rules except on that branch.
+  branch's manifest when a checkout lacks it. ai2rules' manifest landed with
+  sv-pro/ai2rules#97 (merged, bf505fa); `uh` works in ai2rules on any branch.
 - 2026-10-02: **coding-agent-harness merged in as `design/`** (subtree, history kept,
   pushed) **without the design guide**: it distills two books, one a Manning MEAP
   (personal-use license), so it was filtered out of the imported history and is
@@ -35,8 +35,7 @@ Updated 2026-10-02 by Claude Code (desktop). Keep this current as you work.
 
 ## Open questions for the maintainer
 
-1. Merge sv-pro/ai2rules#97 (needed for `uh` to find ai2rules' manifest on main).
-2. After connecting Claude Code to Linear (docs/claude-code-linear.md): read AI2's
+1. After connecting Claude Code to Linear (docs/claude-code-linear.md): read AI2's
    workflow statuses so the `flywheel` and `change` flows can be mapped.
 
 ## Next
@@ -47,7 +46,7 @@ Updated 2026-10-02 by Claude Code (desktop). Keep this current as you work.
   drift, obligations vs changed files, clearer `uh` line). B read Linear itself: AI2-25
   is **Done** in Linear while #87/#95 and #84–#86 are open on GitHub.
   ai2rules restored to `fix/projection-effective-call-log-chain` with its HANDOFF.md.
-  PR sv-pro/ai2rules#97 (clearer pickup instructions) open, not merged.
+  PR sv-pro/ai2rules#97 (clearer pickup instructions, manifest in the repo) merged.
 - Codex `app-server` (experimental) can surface `item/tool/requestUserInput` to an
   orchestrator: a possible route for forwarding one agent's questions to another.
 - Hooks that enforce the checkpoint obligation (e.g. remind to update HANDOFF.md).
