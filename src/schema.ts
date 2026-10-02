@@ -27,7 +27,7 @@ export const Agent = z.strictObject({
   branch_prefixes: z.array(z.string()).default([]),
   // What this agent can reach today, as declared by the user (not detected yet).
   connections: z
-    .object({
+    .strictObject({
       mcp: z.array(z.string()).default([]),
       cli: z.array(z.string()).default([]),
       native: z.array(z.string()).default([]), // providers the agent integrates with itself, e.g. github
@@ -98,14 +98,16 @@ export const Procedure = z.strictObject({
   summary: z.string(),
   run: z.array(z.string()).default([]),
   when: z
-    .object({
+    .strictObject({
       paths: z.array(z.string()).default([]),
       event: z.string().optional(),
     })
     .optional(),
   enforced_by: z
-    .object({ ci: z.string().optional(), hook: z.string().optional() })
+    .strictObject({ ci: z.string().optional(), hook: z.string().optional() })
     .optional(), // absent = prose only
+  // Files the obligation requires to change in the same unit of work when `when.paths` match.
+  touches: z.array(z.string()).default([]),
   entry: z.record(z.string(), z.string()).default({}), // agent id -> command/skill
   defined_in: z.string().optional(),
 });

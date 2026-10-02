@@ -112,6 +112,7 @@ procedures:
     kind: obligation
     summary: Rebuild the committed WASM engine and copy it into blog/public/vendor/harness-wasm/
     when: { paths: [crates/harness-preview/**, crates/compiler/**] }
+    touches: ["blog/public/vendor/harness-wasm/**"]
     run:
       - (cd crates/harness-wasm && wasm-pack build --target web --release)
       - cp crates/harness-wasm/pkg/harness_wasm{_bg.wasm,.js} blog/public/vendor/harness-wasm/
@@ -153,7 +154,10 @@ procedures:
   - id: readme-sync
     kind: obligation
     summary: Update README status, layout, build and test counts, and PLAN checkboxes in the same commit
-    when: { event: every commit that changes status, capabilities, layout, build steps or test counts }
+    when:
+      event: every commit that changes status, capabilities, layout, build steps or test counts
+      paths: ["crates/*/tests/**"]   # adding or removing tests changes the counts
+    touches: [README.md, AGENTS.md]   # both state the total ("331 tests", "total 331")
     defined_in: AGENTS.md
   - id: trackers-sync
     kind: obligation

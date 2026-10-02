@@ -96,8 +96,14 @@ export const githubProvider: Provider = {
   async context(keys, ctx): Promise<Section[]> {
     if (!keys.pr) return [];
     type Check = { name?: string; context?: string; workflowName?: string; status?: string; conclusion?: string; state?: string; detailsUrl?: string; targetUrl?: string };
-    type Full = Pr & { body: string; baseRefName: string; statusCheckRollup: Check[]; comments: { author: { login: string }; body: string; createdAt: string }[] };
-    const r = gh<Full>(ctx, ["pr", "view", keys.pr, "--json", `${PR_FIELDS},body,baseRefName,statusCheckRollup,comments`]);
+    type Full = Pr & {
+      body: string;
+      baseRefName: string;
+      statusCheckRollup: Check[];
+      comments: { author: { login: string }; body: string; createdAt: string }[];
+      closingIssuesReferences?: { number: number }[];
+    };
+    const r = gh<Full>(ctx, ["pr", "view", keys.pr, "--json", `${PR_FIELDS},body,baseRefName,statusCheckRollup,comments,closingIssuesReferences`]);
     if (!r.ok) return [{ title: `Pull request #${keys.pr}`, body: `Could not read: ${r.err}` }];
     const p = r.data;
     const L = [`[#${p.number}](${p.url}) **${p.title}**`, "", `${p.state.toLowerCase()}${p.isDraft ? " (draft)" : ""}, \`${p.headRefName}\` → \`${p.baseRefName}\`, updated ${p.updatedAt ?? "?"}`];
@@ -115,7 +121,15 @@ export const githubProvider: Provider = {
     } else {
       L.push("", "No checks reported.");
     }
+    // What merging does to issues: only closing keywords ("Closes #n") close them.
+    const closes = (p.closingIssuesReferences ?? []).map((i) => `#${i.number}`);
+    L.push("", closes.length ? `Merging closes ${closes.join(", ")}.` : "Merging closes no issue.");
+    if (keys.github && !closes.includes(keys.github) && p.state === "OPEN") {
+      L.push(`**${keys.github} stays open after merge**: the PR does not close it, so its remaining work needs tracking (keep the issue open, or open a follow-up).`);
+    }
     const sections: Section[] = [{ title: `Pull request #${p.number}`, body: L.join("\n") }];
+    const related = relatedWork(keys, ctx, p.number);
+    if (related) sections.push(related);
     const body = p.body ?? "";
     if (body.trim()) sections.push({ title: "PR description", body: quote(clip(body, 8000)) });
     const recent = (p.comments ?? []).slice(-3);
@@ -128,6 +142,38 @@ export const githubProvider: Provider = {
     return sections;
   },
 };
+
+/** Other PRs under the same parent key (e.g. AI2-25), and issues left open after their PR merged. */
+function relatedWork(keys: Record<string, string>, ctx: Ctx, self: number): Section | undefined {
+  for (const k of ctx.project.identity.keys) {
+    const v = keys[k.id];
+    if (!v || k.id === "github") continue;
+    const r = gh<(Pr & { closingIssuesReferences?: { number: number }[] })[]>(ctx, [
+      "pr", "list", "--state", "all", "--search", `"${v}" in:title`, "--json", `${PR_FIELDS},closingIssuesReferences`, "--limit", "30",
+    ]);
+    if (!r.ok) continue;
+    const prs = r.data.filter((p) => p.number !== self && extractKeys(ctx.project.identity, p.title)[k.id] === v);
+    if (!prs.length) continue;
+    const L: string[] = [];
+    let drift = 0;
+    for (const p of prs.sort((a, b) => a.number - b.number)) {
+      const issue = extractKeys(ctx.project.identity, p.title).github;
+      let line = `- #${p.number} ${p.state.toLowerCase()}${issue ? ` (${issue})` : ""}: ${p.title}`;
+      if (p.state === "MERGED" && issue) {
+        const st = gh<{ state: string }>(ctx, ["issue", "view", issue.replace(/^#/, ""), "--json", "state"]);
+        if (st.ok && st.data.state === "OPEN") {
+          const closed = (p.closingIssuesReferences ?? []).some((i) => `#${i.number}` === issue);
+          line += ` ⚠ ${issue} is still open${closed ? "" : " (the PR did not close it)"}`;
+          drift++;
+        }
+      }
+      L.push(line);
+    }
+    if (drift) L.push("", `${drift} issue(s) still open after their PR merged: close them, or say what is left, in every tracker that mirrors them.`);
+    return { title: `Related work under ${v}`, body: L.join("\n") };
+  }
+  return undefined;
+}
 
 export const clip = (s: string, n: number) => (s.length > n ? `${s.slice(0, n)}\n… (${s.length - n} more characters)` : s);
 export const quote = (s: string) => s.trim().split("\n").map((l) => `> ${l}`).join("\n");

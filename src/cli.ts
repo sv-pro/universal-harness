@@ -10,6 +10,7 @@ import { join } from "node:path";
 import { parseArgs } from "node:util";
 import { brief } from "./brief.ts";
 import { LoadError, loadAgents } from "./load.ts";
+import { usage } from "./help.ts";
 import { HOME, locate } from "./locate.ts";
 import { pickup } from "./pickup.ts";
 import { renderPickup } from "./pickup-render.ts";
@@ -33,12 +34,17 @@ const { positionals, values } = parseArgs({
     check: { type: "boolean", default: false },
     force: { type: "boolean", default: false },
     show: { type: "boolean", default: false },
+    help: { type: "boolean", short: "h", default: false },
   },
 });
 
 const [cmd, ...rest] = positionals;
+if (values.help || cmd === "help") {
+  process.stdout.write(usage(cmd === "help" ? rest[0] : cmd));
+  process.exit(0);
+}
 if (!cmd || !COMMANDS.includes(cmd)) {
-  console.error(`usage: uh ${COMMANDS.join("|")} [ref] [--project id|path] [--agent id]`);
+  process.stderr.write(usage());
   process.exit(2);
 }
 const projectArg = values.project ?? (rest[0]?.match(/\.ya?ml$/) ? rest.shift() : undefined);

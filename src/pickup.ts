@@ -4,13 +4,14 @@
 import { existsSync, globSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { merge, seedKeys, slugMatches, type Keys } from "./identity.ts";
-import { currentBranch, readAtBranch } from "./providers/git.ts";
+import { matchesAny } from "./glob.ts";
+import { changedFiles, currentBranch, readAtBranch } from "./providers/git.ts";
 import { filesProvider } from "./providers/files.ts";
 import { gitProvider } from "./providers/git.ts";
 import { githubProvider } from "./providers/github.ts";
 import { linearProvider } from "./providers/linear.ts";
 import type { Candidate, Ctx, Provider, Reading, Section } from "./providers/types.ts";
-import type { AgentRegistry, Carrier, Project } from "./schema.ts";
+import type { AgentRegistry, Carrier, Procedure, Project } from "./schema.ts";
 
 export const PROVIDERS: Provider[] = [gitProvider, githubProvider, linearProvider, filesProvider];
 
@@ -25,6 +26,22 @@ export type FlowStatus = {
   next: { from: string; to: string; by: string; actor: string; agents: string[]; checks: string[]; effects: string[] }[];
 };
 
+export type Obligation = { id: string; summary: string; triggeredBy: string[]; missing: string[] };
+
+/** Obligations whose `when.paths` the changed files match, and the `touches` they did not change. */
+export function checkObligations(procedures: Procedure[], changed: string[]): Obligation[] {
+  const out: Obligation[] = [];
+  for (const p of procedures) {
+    const paths = p.when?.paths ?? [];
+    if (!paths.length) continue;
+    const triggeredBy = changed.filter((f) => matchesAny(f, paths));
+    if (!triggeredBy.length) continue;
+    const missing = p.touches.filter((t) => !changed.some((f) => matchesAny(f, [t])));
+    out.push({ id: p.id, summary: p.summary, triggeredBy, missing });
+  }
+  return out;
+}
+
 export type Record_ = { level: string; location: string; reachable_by: string[]; found: { from: string; text: string }[] };
 
 export type PickupReport = {
@@ -38,6 +55,8 @@ export type PickupReport = {
   flows: FlowStatus[];
   sections: Section[];
   records: Record_[];
+  changed?: string[]; // files the item's branch changes
+  obligations: Obligation[];
   gaps: string[];
 };
 
@@ -162,7 +181,11 @@ export async function pickup(project: Project, registry: AgentRegistry, base: Pi
   const sections: Section[] = [];
   for (const p of providers) sections.push(...((await p.context?.(keys, ctx)) ?? []));
 
-  // 4. continuity records that are files
+  // 4. obligations the branch's changes trigger
+  const changed = keys.branch ? changedFiles(ctx, keys.branch) : undefined;
+  const obligations = changed ? checkObligations(project.procedures, changed) : [];
+
+  // 5. continuity records that are files
   const records: Record_[] = project.continuity.records.map((r) => {
     const found: Record_["found"] = [];
     const path = r.path;
@@ -182,7 +205,7 @@ export async function pickup(project: Project, registry: AgentRegistry, base: Pi
     return { level: r.level, location: r.location, reachable_by: r.reachable_by, found };
   });
 
-  // 5. gaps: what could not be read, and why
+  // 6. gaps: what could not be read, and why
   const gaps: string[] = [];
   for (const [id, r] of cache) {
     if (r.status === "unreadable") gaps.push(`${id}: ${r.reason}`);
@@ -202,6 +225,8 @@ export async function pickup(project: Project, registry: AgentRegistry, base: Pi
     flows,
     sections,
     records,
+    ...(changed ? { changed } : {}),
+    obligations,
     gaps,
   };
 }

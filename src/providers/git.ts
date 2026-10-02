@@ -33,6 +33,14 @@ export function readAtBranch(ctx: Ctx, path: string, branch: string | undefined)
   return null; // not on that branch
 }
 
+/** Files a branch changes since it left the default branch. */
+export function changedFiles(ctx: Ctx, branch: string): string[] | undefined {
+  const ref = branchRef(ctx, branch);
+  if (!ref) return undefined;
+  const r = git(ctx, "diff", "--name-only", `${defaultBranch(ctx)}...${ref}`);
+  return r.ok ? r.out.split("\n").map((l) => l.trim()).filter(Boolean) : undefined;
+}
+
 export const gitProvider: Provider = {
   id: "git",
   reads: (c) => c.kind === "branch",

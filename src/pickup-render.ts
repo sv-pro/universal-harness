@@ -3,6 +3,8 @@ import type { AgentRegistry, Project } from "./schema.ts";
 
 const RECORD_LINES = 80;
 
+const cap = (s: string) => s[0]!.toUpperCase() + s.slice(1);
+
 export function renderPickup(r: PickupReport, project: Project, reg: AgentRegistry): string {
   const name = (id: string) => reg.agents.find((a) => a.id === id)?.name ?? id;
   const L: string[] = [];
@@ -59,6 +61,18 @@ export function renderPickup(r: PickupReport, project: Project, reg: AgentRegist
   }
 
   for (const s of r.sections) L.push(`## ${s.title}`, "", s.body, "");
+
+  if (r.changed) {
+    L.push("## Changes on the branch", "");
+    L.push(`${r.changed.length} file(s): ${r.changed.slice(0, 12).map((f) => `\`${f}\``).join(", ")}${r.changed.length > 12 ? ", …" : ""}`, "");
+    for (const o of r.obligations) {
+      const why = `triggered by ${o.triggeredBy.slice(0, 3).map((f) => `\`${f}\``).join(", ")}${o.triggeredBy.length > 3 ? ", …" : ""}`;
+      L.push(o.missing.length
+        ? `- ⚠ **${o.id}**: ${o.summary}. ${cap(why)}, but the branch does not change ${o.missing.map((m) => `\`${m}\``).join(", ")}.`
+        : `- ${o.id}: ${o.summary} (${why}); its files are changed too.`);
+    }
+    if (r.obligations.length) L.push("");
+  }
 
   L.push("## Continuity records", "");
   for (const rec of r.records) {
