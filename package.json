@@ -1,0 +1,24 @@
+{
+  "name": "universal-harness",
+  "version": "0.0.1",
+  "private": true,
+  "description": "One workspace model per project, projected into every coding agent's setup.",
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "uh": "node src/cli.ts",
+    "test": "node --test",
+    "typecheck": "tsc",
+    "check": "npm run typecheck && npm test && node src/cli.ts validate projects/ai2rules/project.yaml -q && node src/cli.ts validate projects/universal-harness/project.yaml -q"
+  },
+  "dependencies": {
+    "yaml": "^2.9.1",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@types/node": "^24.19.1",
+    "typescript": "^7.0.2"
+  }
+}

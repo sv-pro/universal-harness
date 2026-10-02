@@ -1,0 +1,72 @@
+# The user's agents, defined once and shared by every project.
+# `connections` are declared, not detected: what each agent can reach today.
+# Last checked 2026-10-02 on the Windows host (see docs/model.md §7).
+
+agents:
+  - id: claude-code
+    name: Claude Code
+    status: active
+    runs: [local, cloud]
+    surfaces: [desktop, cli, vscode, mobile, web]
+    capabilities: [code, review, subagents]
+    instructions:
+      entry: CLAUDE.md
+      via: "CLAUDE.md imports @AGENTS.md"
+    extensions: [hooks, subagents, commands, skills, plugins, mcp]
+    mcp_config: ".mcp.json (project), ~/.claude.json (user), claude.ai connectors (account)"
+    connections:
+      mcp: [google-drive, gmail, notion]   # claude.ai connectors seen in a desktop session
+      cli: [git, gh, npm]
+    notes:
+      - "Cloud and mobile sessions see only what is committed to the repo."
+
+  - id: codex
+    name: Codex
+    status: active
+    runs: [local, cloud]
+    surfaces: [desktop, cli, vscode, cloud]
+    capabilities: [code, review, computer-use]
+    instructions:
+      entry: AGENTS.md
+    extensions: [skills, rules, plugins, automations, mcp]
+    mcp_config: "~/.codex/config.toml [mcp_servers]"
+    connections:
+      mcp: [node_repl]
+      cli: [git, gh, npm]
+    notes:
+      - "Has its own automations, queue and memories; do not duplicate them here."
+
+  - id: grok-bot
+    name: Grok Bot
+    status: occasional
+    runs: [cloud]
+    surfaces: [desktop]
+    capabilities: [code]
+    instructions:
+      entry: AGENTS.md
+      via: "unverified: Cursor-based, expected to read AGENTS.md"
+    extensions: [routines, mcp]
+    mcp_config: "~/.grokbot/settings.json mcpBoxServers"
+    connections:
+      mcp: []
+      cli: []
+      native: [github]   # runs coding jobs as GitHub PRs (seen: "AI2-25/#87 … Run failed · #95")
+    notes:
+      - "Works in the cloud on pushed branches; it cannot see local, uncommitted files."
+
+  - id: antigravity
+    name: Antigravity / Gemini CLI
+    status: occasional
+    runs: [local]
+    surfaces: [cli]
+    capabilities: [code, image-generation]
+    instructions:
+      entry: AGENTS.md
+    extensions: [hooks, rules, mcp]
+    mcp_config: "~/.gemini/settings.json mcpServers"
+    connections:
+      mcp: []
+      cli: [git]
+    notes:
+      - "Hook commands run with cwd = the directory holding hooks.json, not the repo root."
+      - "Print mode (-p) ignores project hooks unless --add-dir <repo> is passed."

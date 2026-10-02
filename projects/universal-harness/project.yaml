@@ -1,0 +1,74 @@
+# The harness described in its own model: a minimal project (no tracker, no
+# deploy target, no remote yet), to check that the model does not assume ai2rules.
+
+project:
+  id: universal-harness
+  summary: >-
+    One workspace model per project (resources, knowledge, flows, roles, continuity),
+    validated against the user's agents and projected into each agent's setup.
+  repo: { path: 'C:\Users\imser\workspace\universal-harness', resource: code }
+
+resources:
+  - id: code
+    kind: code-host
+    provider: local-git
+    locator: 'C:\Users\imser\workspace\universal-harness (no remote yet)'
+    access: [{ via: cli, tool: git }]
+  - id: gdocs
+    kind: document-store
+    provider: google-drive
+    locator: '"Universal Harness" (sketch), "Universal Harness — Design v0.1" (superseded by docs/model.md)'
+    access:
+      - { via: mcp, tool: google-drive }
+      - { via: web, actor: human }
+
+knowledge:
+  - { ref: AGENTS.md, role: conventions, authority: normative }
+  - { ref: docs/model.md, role: the categories and where each came from, authority: normative, truth_for: [model] }
+  - { ref: registry/agents.yaml, role: the user's agents and what they can reach, authority: normative, truth_for: [agents] }
+  - { ref: README.md, role: overview and usage, authority: descriptive }
+  - { ref: "gdocs:Universal Harness", role: original sketch, authority: descriptive }
+  - { ref: HANDOFF.md, role: note from the last session, authority: ephemeral, lifetime: session }
+
+procedures:
+  - id: check
+    kind: recipe
+    summary: Typecheck, test, and validate every project manifest
+    run: [npm run check]
+  - id: instance-first
+    kind: obligation
+    summary: Change a category in docs/model.md only together with the instance that forces it
+    defined_in: AGENTS.md
+
+carriers:
+  - { id: branch, kind: branch, locator: git branch, resource: code }
+
+flows:
+  - id: change
+    summary: A change to the model or the tool
+    items: [change]
+    carriers: { primary: branch }
+    states:
+      - { id: in-progress, values: { branch: "a topic branch" } }
+      - { id: done, terminal: true, values: { branch: merged into main } }
+    transitions:
+      - { from: in-progress, to: done, by: maintainer, checks: [check, instance-first] }
+
+roles:
+  - id: maintainer
+    actor: human
+    summary: Decides what the model means; reviews and merges
+    inbox: [change.in-progress]
+  - id: engine
+    summary: Implements and keeps the checks green
+    writes: ["**"]
+    uses: [code]
+    agents: [claude-code, codex]
+
+continuity:
+  branch: { pattern: "<agent>/<slug>" }
+  records:
+    - level: session
+      location: HANDOFF.md, committed on the working branch
+      cadence: after every meaningful step
+      reachable_by: [local]
