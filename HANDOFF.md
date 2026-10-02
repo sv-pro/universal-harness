@@ -22,7 +22,7 @@ Updated 2026-10-02 by Claude Code (desktop). Keep this current as you work.
 
 ## Open questions for the maintainer
 
-2. After connecting Claude Code to Linear (docs/claude-code-linear.md): read AI2's
+1. After connecting Claude Code to Linear (docs/claude-code-linear.md): read AI2's
    workflow statuses so the `flywheel` and `change` flows can be mapped.
 
 ## Next
