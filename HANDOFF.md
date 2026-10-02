@@ -4,6 +4,11 @@ Updated 2026-10-02 by Claude Code (desktop). Keep this current as you work.
 
 ## State
 
+- 2026-10-02, Codex: added `docs/claude-code-linear.md`, explaining Claude Code
+  MCP OAuth setup, verification, and the separate `LINEAR_API_KEY` route for
+  pickup. Checked official setup docs and local provider code; live access remains
+  unverified. No credentials, registry declarations or agent config changed.
+
 - `main`: model, registry, manifests, `uh validate`, `uh brief`, `uh pickup`.
 - `claude/provision` (this branch): `uh provision` (owned blocks in AGENTS.md and
   CLAUDE.md, `.uh/brief.md`, `.mcp.json`, manual steps for user-level config),
