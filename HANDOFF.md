@@ -27,14 +27,13 @@ Updated 2026-10-02 by Claude Code (desktop). Keep this current as you work.
 
 ## Next
 
-- **Trial run (A, C) 2026-10-02:** results in `docs/trials/2026-10-pickup-95.md` §6.
-  Both scored well (10/12, 11/12) and both missed "merging #95 must not close #87".
-  Both runs are contaminated by the parent session's memory; C is not a clean baseline.
-  Candidate increments from it: `uh --help` (what each command reads/writes); the block
-  should say how to check for `uh`; pickup shows "Part of" vs "Closes", checks
-  obligations against changed files, and flags children whose PR merged but issue is
-  open. B (Codex) not run: feasible with the bundled `codex exec`.
-  ai2rules is still on `main` with the fix branch's HANDOFF.md stashed (restore: §7).
+- **Trial #95 done (A, B, C) 2026-10-02:** results in `docs/trials/2026-10-pickup-95.md`
+  §6. A 10/12, C 11/12 (Claude Code subagents, contaminated by the parent's memory);
+  B 12/12 (Codex via `codex exec`, after the fixes: help, closing refs, related-work
+  drift, obligations vs changed files, clearer `uh` line). B read Linear itself: AI2-25
+  is **Done** in Linear while #87/#95 and #84–#86 are open on GitHub.
+  ai2rules restored to `fix/projection-effective-call-log-chain` with its HANDOFF.md.
+  PR sv-pro/ai2rules#97 (clearer pickup instructions) open, not merged.
 - Codex `app-server` (experimental) can surface `item/tool/requestUserInput` to an
   orchestrator: a possible route for forwarding one agent's questions to another.
 - Hooks that enforce the checkpoint obligation (e.g. remind to update HANDOFF.md).

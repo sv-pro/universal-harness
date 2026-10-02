@@ -36,10 +36,12 @@ agents:
     mcp_config: "~/.codex/config.toml [mcp_servers]"
     branch_prefixes: [codex]
     connections:
-      mcp: [node_repl]
+      # linear: ChatGPT apps connector (codex_apps linear.get_issue), used live in trial #95, 2026-10-02
+      mcp: [node_repl, linear]
       cli: [git, gh, npm]
     notes:
       - "Has its own automations, queue and memories; do not duplicate them here."
+      - "codex exec: the read-only sandbox has no network; gh in the sandbox cannot read the Windows credential store (pass GH_TOKEN)."
 
   - id: grok-bot
     name: Grok Bot

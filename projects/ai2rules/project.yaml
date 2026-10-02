@@ -226,7 +226,8 @@ flows:
       - { id: in-progress, summary: "a branch exists, maybe a draft PR", values: { gh-issue: open, gh-pr: draft } }
       - { id: in-review, values: { gh-issue: open, gh-pr: open } }
       - { id: merged, values: { gh-pr: merged } }
-      - { id: closed, terminal: true, values: { gh-issue: closed, gh-pr: merged } }
+      # "done" seen live: AI2-25 is Done in Linear (statusType completed), read by Codex 2026-10-02. Other statuses unknown.
+      - { id: closed, terminal: true, values: { gh-issue: closed, gh-pr: merged, linear-status: done } }
     transitions:
       - { from: open, to: in-progress, by: engine, effects: ["branch <agent>/<key>-<slug>"] }
       - { from: in-progress, to: in-review, by: engine, checks: [rust-checks, readme-sync, wasm-refresh, governance-bench, demos-check, decision-record], effects: ["PR titled [AI2-<n> / #<n>] …, marked ready for review"] }
