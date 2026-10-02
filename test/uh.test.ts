@@ -91,6 +91,7 @@ test("brief projected for an agent shows its roles and reach gaps", () => {
   const p = loadProject("projects/ai2rules/project.yaml");
   const all = brief(p, registry);
   assert.match(all, /## Work flows/);
+  assert.match(all, /\*\*correcting-review\*\*.*Defined in .*review-blog\.md.*Claude Code: `\/review-blog`/);
   assert.match(all, /\*\*human only\*\*/);
   const grok = brief(p, registry, "grok-bot");
   assert.match(grok, /\*\*engine\*\*.*fallback #2/);

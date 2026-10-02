@@ -149,7 +149,7 @@ procedures:
     kind: recipe
     summary: Audit a handed-off artifact and fix defects in place (technical accuracy, SEO), then note what changed
     entry: { claude-code: /review-blog }
-    defined_in: docs/FLYWHEEL.md §3, .claude/agents/correcting-reviewer.md
+    defined_in: "docs/FLYWHEEL.md §3, .claude/agents/correcting-reviewer.md (the role), .claude/commands/review-blog.md (the steps)"
   - id: readme-sync
     kind: obligation
     summary: Update README status, layout, build and test counts, and PLAN checkboxes in the same commit
@@ -300,7 +300,9 @@ roles:
     inbox: [flywheel.advocacy, post.illustrated]
     writes: [crates/**, docs/**, blog/**]
     uses: [code]
-    agents: [claude-code, codex]
+    # Codex first (maintainer, 2026-10-02): Claude Code is now the Megaphone, so it would
+    # mostly review its own posts. Claude Code stays as the fallback.
+    agents: [codex, claude-code]
   - id: ci-pipeline
     actor: automation
     summary: GitHub Actions; the only path to npm and GitHub Releases

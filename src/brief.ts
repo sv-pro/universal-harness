@@ -67,8 +67,13 @@ export function brief(p: Project, reg: AgentRegistry, agentId?: string): string 
       ? `enforced by ${[pr.enforced_by.ci && `CI \`${pr.enforced_by.ci}\``, pr.enforced_by.hook && `hook \`${pr.enforced_by.hook}\``].filter(Boolean).join(", ")}`
       : pr.kind === "recipe" ? "" : "**not enforced: nothing fails if you skip it**";
     const when = pr.when?.paths.length ? ` When you touch ${pr.when.paths.map((x) => `\`${x}\``).join(", ")}.` : pr.when?.event ? ` When: ${pr.when.event}.` : "";
-    const entry = agent && pr.entry[agent.id] ? ` Run it with \`${pr.entry[agent.id]}\`.` : "";
-    L.push(`- **${pr.id}** (${pr.kind}): ${pr.summary}.${when}${entry}${enforced ? ` _${enforced}._` : ""}`);
+    // Projected: this agent's entry point. Shared: every agent's, so a fallback agent
+    // knows the procedure exists and where it is written down.
+    const entries = agent
+      ? (pr.entry[agent.id] ? ` Run it with \`${pr.entry[agent.id]}\`.` : "")
+      : Object.entries(pr.entry).map(([a, e]) => ` ${reg.agents.find((x) => x.id === a)?.name ?? a}: \`${e}\`.`).join("");
+    const defined = pr.defined_in ? ` Defined in ${pr.defined_in}.` : "";
+    L.push(`- **${pr.id}** (${pr.kind}): ${pr.summary}.${when}${defined}${entries}${enforced ? ` _${enforced}._` : ""}`);
     for (const cmd of pr.run) L.push(`  - \`${cmd}\``);
   }
   L.push("");
