@@ -35,8 +35,10 @@ Updated 2026-10-02 by Claude Code (desktop). Keep this current as you work.
 
 ## Open questions for the maintainer
 
-1. Merge the sv-pro/ai2rules PR with the Linear status mapping (change flow). The
-   flywheel flow's Linear mapping is still unknown: which status is "development"?
+1. The flywheel flow's Linear mapping is unknown: which Linear status means
+   "development" or "advocacy"? (The change flow is mapped: sv-pro/ai2rules#98, merged.)
+2. Set `LINEAR_API_KEY` to let `uh pickup` read Linear itself (it does not use the
+   agents' connectors); then check #95 shows Done-in-Linear vs open-on-GitHub.
 
 ## Next
 
