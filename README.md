@@ -40,6 +40,28 @@ block in `AGENTS.md`, one per agent-specific entry file (`CLAUDE.md`), `.uh/brie
 and missing servers in `.mcp.json`. Hand edits to its blocks are detected and refused.
 User-level agent config (Codex, Grok Bot) is printed as manual steps.
 
+## Codex skill
+
+`skills/codex/universal-harness/` teaches Codex to run `uh`: pick up another agent's
+work, read briefs, validate manifests and provision setup. Codex loads skills from
+`~/.codex/skills/`. Link the skill there so it follows this checkout on `git pull`, and
+so it can find the checkout when `uh` is not on PATH. Run these from the checkout:
+
+```bash
+# macOS / Linux
+mkdir -p ~/.codex/skills && ln -s "$PWD/skills/codex/universal-harness" ~/.codex/skills/universal-harness
+```
+
+```powershell
+# Windows (a junction needs no admin rights or Developer Mode)
+New-Item -ItemType Directory -Force "$HOME\.codex\skills" | Out-Null
+New-Item -ItemType Junction -Path "$HOME\.codex\skills\universal-harness" -Target "$PWD\skills\codex\universal-harness"
+```
+
+Copying the directory there also works, but then you update it yourself after a pull.
+Start a new Codex session to load it. With `npm link` done as above, the skill calls
+`uh`; without it, it runs `node <checkout>/src/cli.ts`.
+
 `design/` holds the long-range design this tool may grow into (it was the
 `coding-agent-harness` repository): a high-level design for agentic continuous software
 delivery, the design guide behind it, ai2rules stage worlds and eval sets. The tool takes
