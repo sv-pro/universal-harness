@@ -4,6 +4,11 @@ Updated 2026-10-02 by Claude Code (desktop). Keep this current as you work.
 
 ## State
 
+- 2026-11-08 (Claude Code, cloud): `docs/harness-engineering.md` added on branch
+  `claude/harness-engineering-practices`: 17 harness practices graded by evidence, each
+  with its status in the maintainer's repos and a candidate task; first three tasks at the
+  end. Docs only; `npm run check` not run (the cloud container has Node 22, the repo
+  needs Node 24). Related: AI2-224 (template and shared base profile).
 - `main`: model, registry, manifests, `uh validate|brief|pickup|provision`, Codex's
   `docs/claude-code-linear.md`, connection `evidence`, untracked-record labels,
   `~/` repo paths (a manifest is shared, a home directory is not).

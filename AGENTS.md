@@ -11,6 +11,7 @@ instance each one came from.
 
 ```
 docs/model.md                the categories (resource, knowledge, flow, role, ...)
+docs/harness-engineering.md  harness practices worth adopting, graded by evidence; a backlog source
 registry/agents.yaml         the user's agents: capabilities, config locations, reach
 registry/projects.yaml       the user's described repos, so `uh -p <id>` works anywhere
 .uh/project.yaml             this repo's own manifest (each project keeps its own in .uh/)
