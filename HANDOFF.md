@@ -1,8 +1,18 @@
 # HANDOFF: universal-harness
 
-Updated 2026-10-02 by Claude Code (desktop). Keep this current as you work.
+Updated 2026-11-01 by Claude Code (desktop). Keep this current as you work.
 
 ## State
+
+- 2026-11-01, branch `claude/codex-skill` (PR open, not merged): the Codex skill
+  moved from the maintainer's `~/.codex/skills/` into `skills/codex/universal-harness/`,
+  hard-coded checkout path replaced by discovery (resolve the skill's link, else ask).
+  README "Codex skill" section: link or copy into `~/.codex/skills/`.
+  `test/skills.test.ts` guards it (no machine paths, links resolve, every `uh`
+  command/flag it teaches exists). The maintainer's installed copy is still a plain
+  copy; swap it for the junction from the README after merge.
+  Known: `uh.test.ts` "locate" fails in any checkout not at `~/workspace/universal-harness`
+  (`registry/projects.yaml` pins that path), worktrees included; pre-existing.
 
 - `main`: model, registry, manifests, `uh validate|brief|pickup|provision`, Codex's
   `docs/claude-code-linear.md`, connection `evidence`, untracked-record labels,
