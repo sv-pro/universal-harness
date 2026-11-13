@@ -51,6 +51,19 @@ test/                        node:test
 npm run check   # tsc + tests + validate this repo and the fixture + provision --check
 ```
 
+## Matching a process by its command line: bracket one letter
+
+In `pkill -f`, `pgrep -f` and `ps … | grep`, put one character of the pattern in brackets:
+`pkill -f "/home/user/fleet-stagin[g]/centre.py"`, `grep "[f]leet-staging"`. The pattern still
+matches the target process, but its own literal text in the calling shell's command line does
+not, so the command never matches, lists or kills itself. When a pid file or `ps` gives the pid,
+kill by pid instead.
+
+Without the bracket the command kills its own shell. That is worst over ssh, where the whole
+remote script is one `bash -c` argument holding every pattern in it. On 2026-11-13 a `pkill -f`
+on the fleet box killed the ssh session halfway through a restart, after the same mistake had
+been made before.
+
 <!-- uh:begin workspace sha=ca1636251a9b -->
 ## Workspace and handoff (generated)
 
