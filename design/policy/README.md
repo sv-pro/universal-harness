@@ -1,6 +1,6 @@
 # policy/ — stage worlds for the execution kernel
 
-The executable part of `docs/design-guide/17-execution-governance.md`: the stage worlds the tool gateway decides over, and the expected verdicts that pin their behavior. It uses the [ai2rules](https://github.com/sv-pro/ai2rules) kernel (v0.6.0).
+The executable part of `docs/design-guide/17-execution-governance.md`: the stage worlds the tool gateway decides over, and the expected verdicts that pin their behavior. It uses the [ai2rules](https://ai2rules.dev/kernel/) kernel (v0.6.0).
 
 | Path | What |
 |---|---|
@@ -9,7 +9,7 @@ The executable part of `docs/design-guide/17-execution-governance.md`: the stage
 | `run-cases.py` | Runs every case through `harness gate` and fails on any mismatch. |
 
 ```bash
-npm install -g ai2rules-harness     # or: cargo install --git https://github.com/sv-pro/ai2rules cli-harness
+npm install -g ai2rules-harness
 pip install pyyaml
 python3 policy/run-cases.py         # HARNESS_BIN=/path/to/harness to override
 ```
